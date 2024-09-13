@@ -1,27 +1,21 @@
+// routes/resorts.js
 const express = require('express');
 const axios = require('axios');
 const router = express.Router();
 
-require('dotenv').config();
-
-const rapidApiKey = process.env.RAPIDAPI_KEY;
-
-router.get('/resort', async (req, res) => {
+// Endpoint to fetch resorts
+router.get('/resorts', async (req, res) => {
   try {
-    const options = {
-      method: 'GET',
-      url: 'localhost:8096//ski-resorts-and-conditions.p.rapidapi.com/v1/resort/whistler-blackcomb', // Change if you need a specific resort or list
+    const response = await axios.get('https://ski-resorts-and-conditions.p.rapidapi.com/v1/resorts', {
       headers: {
-        'x-rapidapi-key': rapidApiKey,
-        'x-rapidapi-host': 'ski-resorts-and-conditions.p.rapidapi.com'
-      }
-    };
-    
-    const response = await axios.request(options);
-    res.json(response.data);  // Return the data to the frontend
+        'X-RapidAPI-Key': process.env._RAPIDAPI_KEY,
+        'X-RapidAPI-Host': process.env.RAPIDAPI_HOST,
+      },
+    });
+    res.json(response.data); // Return the data to the frontend
   } catch (error) {
-    console.error('Error fetching the resort:', error);
-    res.status(500).json({ error: 'Failed to fetch the resort' });
+    console.error('Error fetching the resorts:', error);
+    res.status(500).json({ error: 'Failed to fetch the resorts' });
   }
 });
 

@@ -1,36 +1,45 @@
-import { useState, useEffect } from 'react';
+// SearchSkiResorts.js
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 const SearchSkiResorts = () => {
-  const [resort, setResort] = useState(null);
+  const [resorts, setResorts] = useState([]);
   const [query, setQuery] = useState('');
   const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
 
-  const fetchResort = async (searchQuery) => {
+  // Function to fetch resorts based on the search query
+  const fetchResorts = async (searchQuery) => {
     setLoading(true);
     try {
-      const response = await axios.get('localhost:8096//ski-resorts-and-conditions.p.rapidapi.com/v1/resort', {
-        params: { search: searchQuery },
+      // Send a GET request to the RapidAPI endpoint
+      const response = await axios.get('https://ski-resorts-and-conditions.p.rapidapi.com/v1/resorts', {
         headers: {
-          'X-RapidAPI-Host': 'ski-resorts-and-conditions.p.rapidapi.com',
-          'X-RapidAPI-Key': process.env.REACT_APP_RAPIDAPI_KEY,
+          'X-RapidAPI-Key': process.env.RAPIDAPI_KEY,
+          'X-RapidAPI-Host': 'ski-resorts-and-conditions.p.rapidapi.com'
         },
+        params: { search: searchQuery },
       });
-      setResort(response.data);
+      // Update state with the data received
+      setResorts(response.data);
     } catch (error) {
-      console.error('Error fetching the resort:', error);
+      // Log any errors that occur
+      console.error('Error fetching the resorts:', error.message);
     } finally {
+      // Ensure that loading state is set to false after the request completes
       setLoading(false);
     }
   };
 
+  // Handle search action
   const handleSearch = () => {
-    fetchResort(query);
+    fetchResorts(query);
   };
 
+  // Fetch resorts on component mount
   useEffect(() => {
-    // Optionally, you can fetch default data here if needed
-    fetchResort('');
+    fetchResorts('');
   }, []);
 
   return (
@@ -48,12 +57,13 @@ const SearchSkiResorts = () => {
       {loading ? (
         <p>Loading resort details...</p>
       ) : (
-        resort ? (
-          <div>
-            <h3>{resort.name}</h3>
-            <p>{resort.description || 'No description available.'}</p>
-            {/* Add more details based on the response structure */}
-          </div>
+        resorts.length > 0 ? (
+          resorts.map((resort, index) => (
+            <div key={index} onClick={() => navigate(`/resortDetails/${resort.name}`)}>
+              <h3>{resort.name}</h3>
+              <p>{resort.description || 'No description available.'}</p>
+            </div>
+          ))
         ) : (
           <p>No resort details available.</p>
         )
