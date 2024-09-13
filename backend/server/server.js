@@ -25,10 +25,10 @@ app.use('/user', registerRoute);
 app.use('/user', getAllUsersRoute);
 app.use('/user', getUserByIdRoute);
 app.use('/user', editUser);
-app.use('/user', deleteUser);
+app.use('/user', deleteUser);a
 
 // Ski resorts route
-app.use('localhost:8096//ski-resorts-and-conditions.p.rapidapi.com/v1/resort/', skiResortsRoute);
+app.use('https://ski-resorts-and-conditions.p.rapidapi.com/v1/resorts', skiResortsRoute);
 
 // Start server
 app.listen(SERVER_PORT, () => {
