@@ -2,6 +2,9 @@ import React, { useState } from 'react';
 import axios from 'axios';
 import SingleResort from './SingleResort';
 
+const cache = {}; // In-memory cache object
+
+
 const SearchSkiResorts = () => {
   const [resorts, setResorts] = useState([]);
   const [query, setQuery] = useState('');
@@ -12,7 +15,17 @@ const SearchSkiResorts = () => {
     setLoading(true);
     setError(null);
     setResorts([]);
-  
+    
+  // Check if data is in cache
+  if (cache[searchQuery]) {
+    console.log('Cache hit for:', searchQuery); // Cache hit
+    setResorts(cache[searchQuery]);
+    setLoading(false);
+    return;
+  }
+
+  console.log('Cache miss for:', searchQuery); // Cache miss
+
     try {
       const response = await axios.get(`https://ski-resorts-and-conditions.p.rapidapi.com/v1/resort/${searchQuery}`, {
         headers: {
@@ -26,6 +39,9 @@ const SearchSkiResorts = () => {
       const resortData = response.data;
       // If the data is an object with a `data` field or directly an array
       const resortsArray = Array.isArray(resortData.data) ? resortData.data : [resortData.data];
+      // Cache the data
+      cache[searchQuery] = resortsArray;
+     
       setResorts(resortsArray);
     } catch (error) {
       console.error('Error fetching the resort:', error.message);
@@ -34,7 +50,6 @@ const SearchSkiResorts = () => {
       setLoading(false);
     }
   };
-
   const handleSearch = () => {
     if (query.trim()) {
       fetchResorts(query);
