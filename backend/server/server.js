@@ -36,7 +36,7 @@ app.use('/user', editUser);
 app.use('/user', deleteUser);
 
 // Ski resorts route
-app.use('/api/resorts', skiResortsRoute);
+app.use('/api/resortview', skiResortsRoute);
 
 // Start server
 app.listen(SERVER_PORT, () => {

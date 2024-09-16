@@ -1,4 +1,3 @@
-// ResortDetails.js
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
@@ -12,16 +11,9 @@ const ResortDetails = () => {
   useEffect(() => {
     const fetchResortDetails = async () => {
       try {
-        const response = await axios.get('https://ski-resorts-and-conditions.p.rapidapi.com/v1/resort', {
-            headers: {
-                'X-RapidAPI-Key': process.env.REACT_APP_RAPIDAPI_KEY,
-                'X-RapidAPI-Host': process.env.REACT_APP_RAPIDAPI_HOST,
-              
-              
-          },
-          params: { search: name },
-        });
-        setResortData(response.data);
+        const response = await axios.get(`/api/resortview/${name}`);
+        console.log("Full Resort Data:", response.data); // Log the full response to inspect the structure
+        setResortData(response.data); // Set the resort data
       } catch (err) {
         setError(err.message);
       } finally {
@@ -36,19 +28,20 @@ const ResortDetails = () => {
   if (error) return <p>Error: {error}</p>;
   if (!resortData) return <p>No data found</p>;
 
-  const { liftStatus, weather, snowConditions } = resortData;
+  // Replace these keys with the actual keys from the API response
+  const { lifts, weather, conditions } = resortData;
 
   return (
     <div>
       <h1>Resort Details for {name}</h1>
       <h2>Lift Status</h2>
-      <p>{liftStatus || 'No lift status available'}</p>
+      <p>{lifts || 'No lift status available'}</p>
 
       <h2>Weather</h2>
       <p>{weather || 'No weather data available'}</p>
 
       <h2>Snow Conditions</h2>
-      <p>{snowConditions || 'No snow conditions available'}</p>
+      <p>{conditions || 'No snow conditions available'}</p>
     </div>
   );
 };
