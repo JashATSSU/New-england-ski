@@ -14,18 +14,19 @@ const SearchSkiResorts = () => {
     setLoading(true);
     try {
       // Send a GET request to the RapidAPI endpoint
-      const response = await axios.get('https://ski-resorts-and-conditions.p.rapidapi.com/v1/resorts', {
+      const response = await axios.get('https://ski-resorts-and-conditions.p.rapidapi.com/v1/resort', {
         headers: {
-          'X-RapidAPI-Key': process.env.RAPIDAPI_KEY,
-          'X-RapidAPI-Host': 'ski-resorts-and-conditions.p.rapidapi.com'
+          'X-RapidAPI-Key': process.env.REACT_APP_RAPIDAPI_KEY,
+          'X-RapidAPI-Host': process.env.REACT_APP_RAPIDAPI_HOST,
         },
+        
         params: { search: searchQuery },
       });
       // Update state with the data received
       setResorts(response.data);
     } catch (error) {
       // Log any errors that occur
-      console.error('Error fetching the resorts:', error.message);
+      console.error('Error fetching the resort:', error.message);
     } finally {
       // Ensure that loading state is set to false after the request completes
       setLoading(false);

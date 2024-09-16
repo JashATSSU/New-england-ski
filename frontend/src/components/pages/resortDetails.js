@@ -12,10 +12,12 @@ const ResortDetails = () => {
   useEffect(() => {
     const fetchResortDetails = async () => {
       try {
-        const response = await axios.get('https://ski-resorts-and-conditions.p.rapidapi.com/v1/resorts', {
-          headers: {
-            'X-RapidAPI-Key': process.env.RAPIDAPI_KEY,
-            'X-RapidAPI-Host': 'ski-resorts-and-conditions.p.rapidapi.com'
+        const response = await axios.get('https://ski-resorts-and-conditions.p.rapidapi.com/v1/resort', {
+            headers: {
+                'X-RapidAPI-Key': process.env.REACT_APP_RAPIDAPI_KEY,
+                'X-RapidAPI-Host': process.env.REACT_APP_RAPIDAPI_HOST,
+              
+              
           },
           params: { search: name },
         });
