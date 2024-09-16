@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import axios from 'axios';
-import SingleResort from './SingleResort'; // Import the SingleResort component
+import SingleResort from './SingleResort';
 
 const SearchSkiResorts = () => {
   const [resorts, setResorts] = useState([]);
@@ -21,35 +21,12 @@ const SearchSkiResorts = () => {
         },
       });
   
-      // Log the entire response and its structure
       console.log('API Response:', response.data);
-  
-      const resortsData = response.data;
-  
-      // Handle response based on whether it's an array or an object
-      if (Array.isArray(resortsData)) {
-        // If it's an array
-        const filteredResorts = resortsData.filter(resort =>
-          ['New Hampshire', 'Vermont', 'Maine', 'Massachusetts', 'Connecticut', 'Rhode Island'].includes(resort.state)
-        );
-        setResorts(filteredResorts.length > 0 ? filteredResorts : []);
-      } else if (resortsData && typeof resortsData === 'object') {
-        // If it's an object, check the fields and their types
-        console.log('Object fields:', Object.keys(resortsData)); // Log the keys of the object
-  
-        // Modify the condition based on the actual structure
-        const key = Object.keys(resortsData)[0]; // Adjust based on the actual field name
-        if (Array.isArray(resortsData[key])) {
-          const filteredResorts = resortsData[key].filter(resort =>
-            ['New Hampshire', 'Vermont', 'Maine', 'Massachusetts', 'Connecticut', 'Rhode Island'].includes(resort.state)
-          );
-          setResorts(filteredResorts.length > 0 ? filteredResorts : []);
-        } else {
-          setError(`Unexpected format: '${key}' field is not an array`);
-        }
-      } else {
-        setError('Unexpected format: Response data is neither an array nor an object with an array field');
-      }
+
+      const resortData = response.data;
+      // If the data is an object with a `data` field or directly an array
+      const resortsArray = Array.isArray(resortData.data) ? resortData.data : [resortData.data];
+      setResorts(resortsArray);
     } catch (error) {
       console.error('Error fetching the resort:', error.message);
       setError('Failed to fetch resorts. Please try again later.');
@@ -57,9 +34,6 @@ const SearchSkiResorts = () => {
       setLoading(false);
     }
   };
-  
-  
-  
 
   const handleSearch = () => {
     if (query.trim()) {

@@ -1,25 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 
-const SingleResort = ({ resort }) => { 
+const SingleResort = ({ resort }) => {
   const [resortDetails, setResortDetails] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
   const fetchResortDetails = async () => {
     setLoading(true);
-    const options = {
-      method: 'GET',
-      url: `https://ski-resorts-and-conditions.p.rapidapi.com/v1/resort/${resort.slug}`, // Use the correct endpoint
-      headers: {
-        'x-rapidapi-key': process.env.REACT_APP_RAPIDAPI_KEY,
-        'x-rapidapi-host': process.env.REACT_APP_RAPIDAPI_HOST,
-      },
-    };
+    setError(null);
 
     try {
-      const response = await axios.request(options);
-      setResortDetails(response.data); // Save the detailed resort data
+      const response = await axios.get(`https://ski-resorts-and-conditions.p.rapidapi.com/v1/resort/${resort.slug}`, {
+        headers: {
+          'X-RapidAPI-Key': process.env.REACT_APP_RAPIDAPI_KEY,
+          'X-RapidAPI-Host': process.env.REACT_APP_RAPIDAPI_HOST,
+        },
+      });
+
+      console.log('Resort Details:', response.data);
+      setResortDetails(response.data);
     } catch (error) {
       console.error('Error fetching resort details:', error);
       setError('Failed to fetch resort details.');
@@ -43,11 +43,14 @@ const SingleResort = ({ resort }) => {
       <h3>{resort.name}</h3>
       <p>{resort.description || 'No description available.'}</p>
       <h4>Lift Status</h4>
-      <p>{lifts || 'No lift status available'}</p>
+      <p>
+        {lifts ? `Open: ${lifts.stats.open}, Closed: ${lifts.stats.closed}` : 'No lift status available'}
+      </p>
       <h4>Weather</h4>
       <p>{weather || 'No weather data available'}</p>
       <h4>Conditions</h4>
       <p>{conditions || 'No conditions available'}</p>
+      <a href={resort.href} target="_blank" rel="noopener noreferrer">More Details</a>
     </li>
   );
 };
