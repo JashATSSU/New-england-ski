@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import SingleResort from './SingleResort';
+import Sidebar from './Sidebar'; // Import the Sidebar component
 
 const cache = {}; // In-memory cache object
 
@@ -36,9 +37,7 @@ const SearchSkiResorts = () => {
       console.log('API Response:', response.data);
 
       const resortData = response.data;
-      // If the data is an object with a `data` field or directly an array
       const resortsArray = Array.isArray(resortData.data) ? resortData.data : [resortData.data];
-      // Cache the data
       cache[searchQuery] = resortsArray;
      
       setResorts(resortsArray);
@@ -58,42 +57,51 @@ const SearchSkiResorts = () => {
     }
   };
 
+  const handleSelectResort = (resort) => {
+    setQuery(resort);
+    fetchResorts(resort);
+  };
+
   return (
     <div className="search-container">
-      <h2>Search for New England Ski Resorts</h2>
-      <div className="search-bar">
-        <input
-          type="text"
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-          placeholder="Enter resort name"
-          className="search-input"
-        />
-        <button onClick={handleSearch} className="search-button">Search</button>
+      <Sidebar onSelect={handleSelectResort} /> {/* Include Sidebar here */}
+      <div className="main-content">
+        <h2>Search for New England Ski Resorts</h2>
+        <div className="search-bar">
+          <input
+            type="text"
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+            placeholder="Enter resort name"
+            className="search-input"
+          />
+          <button onClick={handleSearch} className="search-button">Search</button>
+        </div>
+
+        {loading ? (
+          <p className="loading-text">Loading resort details...</p>
+        ) : error ? (
+          <p className="error-text">{error}</p>
+        ) : resorts.length > 0 ? (
+          <ul className="resort-list">
+            {resorts.map((resort, index) => (
+              <SingleResort key={index} resort={resort} />
+            ))}
+          </ul>
+        ) : (
+          <p className="no-results-text">No resort found. Try a different search.</p>
+        )}
       </div>
 
-      {loading ? (
-        <p className="loading-text">Loading resort details...</p>
-      ) : error ? (
-        <p className="error-text">{error}</p>
-      ) : resorts.length > 0 ? (
-        <ul className="resort-list">
-          {resorts.map((resort, index) => (
-            <SingleResort key={index} resort={resort} />
-          ))}
-        </ul>
-      ) : (
-        <p className="no-results-text">No resort found. Try a different search.</p>
-      )}
       <style jsx>{`
         .search-container {
-          max-width: 800px;
-          margin: 0 auto;
+          display: flex;
+        }
+
+        .main-content {
+          flex: 1;
+          margin-left: 260px; /* Adjust according to sidebar width */
           padding: 20px;
-          text-align: center;
-          background: #f9f9f9;
-          border-radius: 8px;
-          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
         h2 {
