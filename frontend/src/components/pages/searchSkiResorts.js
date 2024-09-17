@@ -4,7 +4,6 @@ import SingleResort from './SingleResort';
 
 const cache = {}; // In-memory cache object
 
-
 const SearchSkiResorts = () => {
   const [resorts, setResorts] = useState([]);
   const [query, setQuery] = useState('');
@@ -16,15 +15,15 @@ const SearchSkiResorts = () => {
     setError(null);
     setResorts([]);
     
-  // Check if data is in cache
-  if (cache[searchQuery]) {
-    console.log('Cache hit for:', searchQuery); // Cache hit
-    setResorts(cache[searchQuery]);
-    setLoading(false);
-    return;
-  }
+    // Check if data is in cache
+    if (cache[searchQuery]) {
+      console.log('Cache hit for:', searchQuery); // Cache hit
+      setResorts(cache[searchQuery]);
+      setLoading(false);
+      return;
+    }
 
-  console.log('Cache miss for:', searchQuery); // Cache miss
+    console.log('Cache miss for:', searchQuery); // Cache miss
 
     try {
       const response = await axios.get(`https://ski-resorts-and-conditions.p.rapidapi.com/v1/resort/${searchQuery}`, {
@@ -50,6 +49,7 @@ const SearchSkiResorts = () => {
       setLoading(false);
     }
   };
+
   const handleSearch = () => {
     if (query.trim()) {
       fetchResorts(query);
@@ -59,31 +59,102 @@ const SearchSkiResorts = () => {
   };
 
   return (
-    <div>
+    <div className="search-container">
       <h2>Search for New England Ski Resorts</h2>
-      <div>
+      <div className="search-bar">
         <input
           type="text"
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Enter resort name"
+          className="search-input"
         />
-        <button onClick={handleSearch}>Search</button>
+        <button onClick={handleSearch} className="search-button">Search</button>
       </div>
 
       {loading ? (
-        <p>Loading resort details...</p>
+        <p className="loading-text">Loading resort details...</p>
       ) : error ? (
-        <p>{error}</p>
+        <p className="error-text">{error}</p>
       ) : resorts.length > 0 ? (
-        <ul>
+        <ul className="resort-list">
           {resorts.map((resort, index) => (
             <SingleResort key={index} resort={resort} />
           ))}
         </ul>
       ) : (
-        <p>No resort found. Try a different search.</p>
+        <p className="no-results-text">No resort found. Try a different search.</p>
       )}
+      <style jsx>{`
+        .search-container {
+          max-width: 800px;
+          margin: 0 auto;
+          padding: 20px;
+          text-align: center;
+          background: #f9f9f9;
+          border-radius: 8px;
+          box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+          color: #333;
+          margin-bottom: 20px;
+        }
+
+        .search-bar {
+          display: flex;
+          justify-content: center;
+          margin-bottom: 20px;
+        }
+
+        .search-input {
+          width: 100%;
+          max-width: 400px;
+          padding: 10px;
+          border: 1px solid #ddd;
+          border-radius: 4px;
+          font-size: 16px;
+          margin-right: 10px;
+          outline: none;
+          transition: border-color 0.3s;
+        }
+
+        .search-input:focus {
+          border-color: #007bff;
+        }
+
+        .search-button {
+          padding: 10px 20px;
+          border: none;
+          border-radius: 4px;
+          background-color: #007bff;
+          color: #fff;
+          font-size: 16px;
+          cursor: pointer;
+          transition: background-color 0.3s;
+        }
+
+        .search-button:hover {
+          background-color: #0056b3;
+        }
+
+        .loading-text,
+        .error-text,
+        .no-results-text {
+          color: #555;
+        }
+
+        .resort-list {
+          list-style: none;
+          padding: 0;
+          margin: 0;
+        }
+
+        .resort-list li {
+          padding: 10px;
+          border-bottom: 1px solid #ddd;
+        }
+      `}</style>
     </div>
   );
 };
