@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import './SingleResort.css'; // Make sure to create this CSS file for styling
+import { resortsList } from './resortsData'; // Import the resorts list
 
 const SingleResort = ({ resort }) => {
   const [resortDetails, setResortDetails] = useState(null);
@@ -68,10 +69,14 @@ const SingleResort = ({ resort }) => {
 
   const { lifts } = resortDetails.data;
 
+  // Find the selected resort's motto
+  const selectedResort = resortsList.find(r => r.name === resort.name);
+
   return (
     <li className="resort">
       <h3>{resort.name}</h3>
-      <p>{resort.description || 'No description available.'}</p>
+      <p>{selectedResort.description || 'No description available.'}</p>
+      <p><em>{selectedResort.motto}</em></p> {/* Display the motto */}
 
       {/* Lift Status */}
       <h4>Lift Status</h4>

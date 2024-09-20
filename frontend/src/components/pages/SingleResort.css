@@ -1,44 +1,43 @@
 .resort-container {
-    padding: 20px;
-    border: 1px solid #ccc;
-    border-radius: 8px;
-    background-color: #f9f9f9;
-    margin: 20px;
-  }
-  
-  .resort-name {
-    font-size: 24px;
-    font-weight: bold;
-    color: #333;
-  }
-  
-  .resort-description {
-    font-size: 16px;
-    color: #666;
-  }
-  
-  .lift-status, .forecast, .hourly-forecast {
-    margin: 15px 0;
-  }
-  
-  .forecast-day, .hourly {
-    background-color: #e7f3ff;
-    padding: 10px;
-    border-radius: 4px;
-    margin: 5px 0;
-  }
-  
-  h4 {
-    color: #007bff;
-  }
-  
-  h5 {
-    margin: 5px 0;
-  }
-  
-  a {
-    display: inline-block;
-    margin-top: 10px;
-    color: #007bff;
-  }
-  
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  margin: 20px;
+}
+
+.resort-name {
+  font-size: 24px;
+  font-weight: bold;
+  color: #333;
+}
+
+.resort-description {
+  font-size: 16px;
+  color: #666;
+}
+
+.lift-status, .forecast, .hourly-forecast {
+  margin: 15px 0;
+}
+
+.forecast-day, .hourly {
+  background-color: #e7f3ff;
+  padding: 10px;
+  border-radius: 4px;
+  margin: 5px 0;
+}
+
+h4 {
+  color: #007bff;
+}
+
+h5 {
+  margin: 5px 0;
+}
+
+a {
+  display: inline-block;
+  margin-top: 10px;
+  color: #007bff;
+}

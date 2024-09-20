@@ -1,6 +1,6 @@
 import React from 'react';
 
-// Dummy data for ski resorts
+// Updated list of New England ski resorts
 const resortsList = [
   'loon',
   'brettonwoods',
@@ -9,6 +9,17 @@ const resortsList = [
   'bolton-valley',
   'bromley-mountain',
   'burke-mountain',
+  'stowe',
+  'jay-peak',
+  'killington',
+  'stratton',
+  'okemo',
+  'mount-snow',
+  'mohawk-trail',
+  'great-glen',
+  'wildcat',
+  'cannon-mountain',
+  'windham',
   // Add more resorts as needed
 ];
 
@@ -29,11 +40,10 @@ const Sidebar = ({ onSelect }) => {
           padding: 20px;
           background: #f1f1f1;
           border-right: 1px solid #ddd;
-          height: calc(100vh - 55px); /* Adjust height to fit with the top position */
-          position: fixed;
-          top: 55px; /* Raised to be less than a centimeter below the navbar */
-          left: 0;
+          position: relative; /* Change to relative */
+          height: auto; /* Allow height to adjust dynamically */
           overflow-y: auto; /* Add scroll if content overflows */
+          max-height: calc(100vh - 55px); /* Keep the maximum height within the viewport */
         }
         
         .sidebar h3 {
