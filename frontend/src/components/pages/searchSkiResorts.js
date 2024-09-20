@@ -15,7 +15,7 @@ const SearchSkiResorts = () => {
     setLoading(true);
     setError(null);
     setResorts([]);
-    
+
     // Check if data is in cache
     if (cache[searchQuery]) {
       console.log('Cache hit for:', searchQuery); // Cache hit
@@ -27,19 +27,22 @@ const SearchSkiResorts = () => {
     console.log('Cache miss for:', searchQuery); // Cache miss
 
     try {
-      const response = await axios.get(`https://ski-resorts-and-conditions.p.rapidapi.com/v1/resort/${searchQuery}`, {
-        headers: {
-          'X-RapidAPI-Key': process.env.REACT_APP_RAPIDAPI_KEY,
-          'X-RapidAPI-Host': process.env.REACT_APP_RAPIDAPI_HOST,
-        },
-      });
-  
+      const response = await axios.get(
+        `https://ski-resorts-and-conditions.p.rapidapi.com/v1/resort/${searchQuery}`,
+        {
+          headers: {
+            'X-RapidAPI-Key': process.env.REACT_APP_RAPIDAPI_KEY,
+            'X-RapidAPI-Host': process.env.REACT_APP_RAPIDAPI_HOST,
+          },
+        }
+      );
+
       console.log('API Response:', response.data);
 
       const resortData = response.data;
       const resortsArray = Array.isArray(resortData.data) ? resortData.data : [resortData.data];
       cache[searchQuery] = resortsArray;
-     
+
       setResorts(resortsArray);
     } catch (error) {
       console.error('Error fetching the resort:', error.message);
@@ -53,7 +56,7 @@ const SearchSkiResorts = () => {
     if (query.trim()) {
       fetchResorts(query);
     } else {
-      setError("Please enter a valid search query.");
+      setError('Please enter a valid search query.');
     }
   };
 
@@ -66,7 +69,7 @@ const SearchSkiResorts = () => {
     <div className="search-container">
       <Sidebar onSelect={handleSelectResort} /> {/* Include Sidebar here */}
       <div className="main-content">
-        <h2>Search for New England Ski Resorts</h2>
+        <h2>Search for Ski Resorts</h2>
         <div className="search-bar">
           <input
             type="text"
@@ -75,7 +78,9 @@ const SearchSkiResorts = () => {
             placeholder="Enter resort name"
             className="search-input"
           />
-          <button onClick={handleSearch} className="search-button">Search</button>
+          <button onClick={handleSearch} className="search-button">
+            Search
+          </button>
         </div>
 
         {loading ? (
@@ -100,7 +105,7 @@ const SearchSkiResorts = () => {
 
         .main-content {
           flex: 1;
-          margin-left: 260px; /* Adjust according to sidebar width */
+          margin-left: 260px;
           padding: 20px;
         }
 
