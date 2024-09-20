@@ -36,7 +36,7 @@ const SingleResort = ({ resort }) => {
   if (error) return <p>{error}</p>;
   if (!resortDetails) return <p>No details available</p>;
 
-  const { lifts, weather, conditions } = resortDetails;
+  const { lifts, weather, conditions } = resortDetails.data;
 
   return (
     <li>
