@@ -9,6 +9,7 @@ import Signup from "./components/pages/registerPage";
 import PrivateUserProfile from "./components/pages/privateUserProfilePage";
 import ResortDetails from "./components/pages/resortDetails";
 import SearchSkiResorts from "./components/pages/searchSkiResorts";
+import './index.css';
 
 const App = () => {
   return (
