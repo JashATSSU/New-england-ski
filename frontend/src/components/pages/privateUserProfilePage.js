@@ -26,7 +26,6 @@ const PrivateUserProfile = () => {
   const handleUploadModal = () => setUploadModal(true);
 
   const handleLogout = async () => {
-    localStorage.clear();
     navigate("/");
   };
 
@@ -50,7 +49,7 @@ const PrivateUserProfile = () => {
       canvasRef.current.height = videoRef.current.videoHeight;
       context.drawImage(videoRef.current, 0, 0);
       const image = canvasRef.current.toDataURL("image/png");
-      setCapturedImage(image); // Temporarily set captured image
+      setCapturedImage(image); // Sets profile picture
     }
   };
 
@@ -58,8 +57,7 @@ const PrivateUserProfile = () => {
     try {
       const response = await axios.post('http://localhost:8081/api/upload-profile-picture', { image });
       if (response.data && response.data.imageUrl) {
-        localStorage.setItem('profilePicture', response.data.imageUrl);
-        setSavedImage(response.data.imageUrl); // Persist image
+        setSavedImage(response.data.imageUrl); // Set the saved image URL
         setCapturedImage(response.data.imageUrl); // Set it as the current captured image
       } else {
         console.error('Upload failed:', response);
@@ -75,7 +73,7 @@ const PrivateUserProfile = () => {
       const reader = new FileReader();
       reader.onloadend = async () => {
         const image = reader.result;
-        setCapturedImage(image); // Temporarily set uploaded image
+        setCapturedImage(image); // Sets uploaded image
       };
       reader.readAsDataURL(file);
     }
@@ -83,14 +81,13 @@ const PrivateUserProfile = () => {
 
   const handleSaveProfilePicture = async () => {
     if (capturedImage) {
-      await uploadPhoto(capturedImage); // Upload the captured or selected image to S3 and save it locally
+      await uploadPhoto(capturedImage); // Upload the captured or selected image to S3
     }
   };
 
   useEffect(() => {
     setUser(getUserInfo());
-    const storedImage = localStorage.getItem('profilePicture');
-    if (storedImage) setSavedImage(storedImage); // Load persisted profile picture
+    // Optionally, load the saved image URL from S3 if applicable
   }, []);
 
   if (!user) return <div className="flex items-center justify-center h-screen"><h4>Log in to view this page.</h4></div>;
@@ -161,9 +158,11 @@ const PrivateUserProfile = () => {
                     as="textarea" 
                     rows={3} 
                     placeholder="Share your thoughts..." 
-                    className="mt-2"
+                    className="mt-2" 
                   />
+                  <button type="submit" className="mt-2">Submit</button>
                 </Form.Group>
+
               </div>
 
               {/* Upload Buttons */}
@@ -192,7 +191,6 @@ const PrivateUserProfile = () => {
                   Save as Profile Picture
                 </Button>
               )}
-
             </div>
             <Button variant="primary" className="mt-6" onClick={handleShow}>
               Log Out
@@ -210,32 +208,29 @@ const PrivateUserProfile = () => {
               </Modal.Footer>
             </Modal>
 
-            
-              {/* Camera Modal */}
-              <Modal show={uploadModal} onHide={handleClose}>
-                <Modal.Header closeButton>
-                  <Modal.Title>Capture Profile Picture</Modal.Title>
-                </Modal.Header>
-                <Modal.Body>
-                  <div className="flex justify-center">
-                    <video ref={videoRef} className="w-full h-auto border" />
-                    <canvas ref={canvasRef} className="hidden" />
-                  </div>
-                  <Button className="mt-2" onClick={capturePhoto}>
-                    Capture Photo
-                  </Button>
-                </Modal.Body>
-                <Modal.Footer>
-                  <Button variant="secondary" onClick={handleClose}>
-                    Close
-                  </Button>
-                </Modal.Footer>
-              </Modal>
-            </Card.Body>
-          </Card>
-        </div>
+            {/* Camera Modal */}
+            <Modal show={uploadModal} onHide={handleClose}>
+              <Modal.Header closeButton>
+                <Modal.Title>Capture Profile Picture</Modal.Title>
+              </Modal.Header>
+              <Modal.Body>
+                <div className="flex justify-center">
+                  <video ref={videoRef} className="w-full h-auto border" />
+                  <canvas ref={canvasRef} className="hidden" />
+                </div>
+                <Button className="mt-2" onClick={capturePhoto}>
+                  Capture Photo
+                </Button>
+              </Modal.Body>
+              <Modal.Footer>
+                <Button variant="secondary" onClick={handleClose}>Close</Button>
+              </Modal.Footer>
+            </Modal>
+          </Card.Body>
+        </Card>
       </div>
-    );
+    </div>
+  );
 };
 
 export default PrivateUserProfile;
