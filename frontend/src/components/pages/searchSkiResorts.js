@@ -1,7 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import SingleResort from './SingleResort';
 import Sidebar from './Sidebar'; // Import the Sidebar component
+import getUserInfo from '../../utilities/decodeJwt';
+import { useNavigate } from 'react-router-dom';
 
 const cache = {}; // In-memory cache object
 
@@ -10,6 +12,20 @@ const SearchSkiResorts = () => {
   const [query, setQuery] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
+  const [user, setUser] = useState({});
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    setUser(getUserInfo());
+  }, []);
+
+  if (!user) {
+    return (
+      <div style={styles.container}>
+        <h4 style={styles.message}>Log in to view this page.</h4>
+      </div>
+    );
+  }
 
   const fetchResorts = async (searchQuery) => {
     setLoading(true);
@@ -170,6 +186,20 @@ const SearchSkiResorts = () => {
       `}</style>
     </div>
   );
+};
+
+const styles = {
+  container: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: '100vh',
+    textAlign: 'center',
+  },
+  message: {
+    color: '#333',
+    fontSize: '1.5rem',
+  },
 };
 
 export default SearchSkiResorts;

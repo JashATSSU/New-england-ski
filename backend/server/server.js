@@ -3,7 +3,13 @@ const cors = require('cors');
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const AWS = require('aws-sdk');
-
+const loginRoute = require('./routes/userLogin');
+const getAllUsersRoute = require('./routes/userGetAllUsers');
+const registerRoute = require('./routes/userSignUp');
+const getUserByIdRoute = require('./routes/userGetUserById');
+const editUser = require('./routes/userEditUser');
+const deleteUser = require('./routes/userDeleteAll');
+const skiResortsRoute = require('./routes/skiResorts');
 dotenv.config();
 
 const app = express();
@@ -19,7 +25,15 @@ mongoose.set('strictQuery', false);
 // Middleware setup
 app.use(cors({ origin: '*' }));
 app.use(express.json({ limit: '10mb' })); // Increase limit for larger images
-
+// User-related routes
+app.use('/user', loginRoute);
+app.use('/user', registerRoute);
+app.use('/user', getAllUsersRoute);
+app.use('/user', getUserByIdRoute);
+app.use('/user', editUser);
+app.use('/user', deleteUser);
+// Ski resorts route
+app.use('/api/resortview', skiResortsRoute);
 // Configure AWS SDK for S3
 AWS.config.update({
   accessKeyId: process.env.AWS_ACCESS_KEY_ID,

@@ -9,6 +9,7 @@ const PrivateUserProfile = () => {
   const [uploadModal, setUploadModal] = useState(false);
   const [user, setUser] = useState(null);
   const [capturedImage, setCapturedImage] = useState(null);
+  const [savedImage, setSavedImage] = useState(null);
   const [cameraStream, setCameraStream] = useState(null);
   const [preference, setPreference] = useState({ sport: '', trail: '', status: '' });
   const videoRef = useRef(null);
@@ -49,9 +50,7 @@ const PrivateUserProfile = () => {
       canvasRef.current.height = videoRef.current.videoHeight;
       context.drawImage(videoRef.current, 0, 0);
       const image = canvasRef.current.toDataURL("image/png");
-      setCapturedImage(image);
-      uploadPhoto(image);
-      setCameraStream(null);
+      setCapturedImage(image); // Temporarily set captured image
     }
   };
 
@@ -60,7 +59,8 @@ const PrivateUserProfile = () => {
       const response = await axios.post('http://localhost:8081/api/upload-profile-picture', { image });
       if (response.data && response.data.imageUrl) {
         localStorage.setItem('profilePicture', response.data.imageUrl);
-        setCapturedImage(response.data.imageUrl);
+        setSavedImage(response.data.imageUrl); // Persist image
+        setCapturedImage(response.data.imageUrl); // Set it as the current captured image
       } else {
         console.error('Upload failed:', response);
       }
@@ -69,58 +69,129 @@ const PrivateUserProfile = () => {
     }
   };
 
+  const handleFileUpload = async (event) => {
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = async () => {
+        const image = reader.result;
+        setCapturedImage(image); // Temporarily set uploaded image
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleSaveProfilePicture = async () => {
+    if (capturedImage) {
+      await uploadPhoto(capturedImage); // Upload the captured or selected image to S3 and save it locally
+    }
+  };
+
   useEffect(() => {
     setUser(getUserInfo());
     const storedImage = localStorage.getItem('profilePicture');
-    if (storedImage) setCapturedImage(storedImage);
+    if (storedImage) setSavedImage(storedImage); // Load persisted profile picture
   }, []);
 
   if (!user) return <div className="flex items-center justify-center h-screen"><h4>Log in to view this page.</h4></div>;
 
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-gray-200 to-white">
-      <div className="w-full max-w-lg">
-        <Card className="p-8 rounded-lg shadow-lg transition-transform transform hover:scale-105">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-r from-gray-200 to-white p-4">
+      <div className="w-full h-full flex items-center justify-center">
+        <Card className="w-full max-w-2xl p-8 rounded-lg shadow-lg transition-transform transform hover:scale-105">
           <Card.Body>
             <div className="text-center">
-              <Image
-                src={capturedImage || 'https://via.placeholder.com/150'}
-                className="w-36 h-36 object-cover rounded-full border-4 border-gray-400"
-                alt="Profile"
-              />
-              <h1 className="text-3xl mt-4 font-semibold text-gray-800">{user.username}</h1>
+              {/* Profile Image Section */}
+              <div className="flex justify-center">
+                <Image
+                  src={savedImage || capturedImage || 'https://via.placeholder.com/150'}
+                  className="w-48 h-48 object-cover rounded-full border-4 border-gray-400 mx-auto"
+                  alt="Profile"
+                />
+              </div>
+              <h1 className="text-4xl mt-4 font-semibold text-gray-800">Profile</h1>
+              <h2 className="text-2xl mt-2 font-semibold text-gray-800">{user.username}</h2>
               <p className="text-lg text-gray-500">{user.email}</p>
 
               {/* User Preferences Section */}
-              <Form.Group className="mt-4 text-center space-y-4">
-                <Dropdown onSelect={(eventKey) => setPreference({ ...preference, sport: eventKey })}>
-                  <Dropdown.Toggle className="btn-primary">Preferred Sport</Dropdown.Toggle>
-                  <Dropdown.Menu>
-                    <Dropdown.Item eventKey="Skiing">Skiing</Dropdown.Item>
-                    <Dropdown.Item eventKey="Snowboarding">Snowboarding</Dropdown.Item>
-                  </Dropdown.Menu>
-                </Dropdown>
+              <div className="mt-4 space-y-4">
+                <h2 className="text-2xl font-bold text-gray-800">User Preferences</h2>
+                <Form.Group>
+                  <Dropdown onSelect={(eventKey) => setPreference({ ...preference, sport: eventKey })}>
+                    <Dropdown.Toggle className="bg-blue-600 text-white border-none hover:bg-blue-700 transition duration-200">
+                      Preferred Sport: {preference.sport || 'Select your sport'}
+                    </Dropdown.Toggle>
+                    <Dropdown.Menu>
+                      <Dropdown.Item eventKey="Skiing">Skiing</Dropdown.Item>
+                      <Dropdown.Item eventKey="Snowboarding">Snowboarding</Dropdown.Item>
+                    </Dropdown.Menu>
+                  </Dropdown>
+                </Form.Group>
 
-                <Dropdown onSelect={(eventKey) => setPreference({ ...preference, trail: eventKey })}>
-                  <Dropdown.Toggle className="btn-primary">Trail Type</Dropdown.Toggle>
-                  <Dropdown.Menu>
-                    <Dropdown.Item eventKey="Powder">Powder</Dropdown.Item>
-                    <Dropdown.Item eventKey="Compact">Compact</Dropdown.Item>
-                  </Dropdown.Menu>
-                </Dropdown>
+                {/* Trail Type Dropdown */}
+                <Form.Group>
+                  <Dropdown onSelect={(eventKey) => setPreference({ ...preference, trail: eventKey })}>
+                    <Dropdown.Toggle className="bg-blue-600 text-white border-none hover:bg-blue-700 transition duration-200">
+                      Trail Type: {preference.trail || 'Select trail type'}
+                    </Dropdown.Toggle>
+                    <Dropdown.Menu>
+                      <Dropdown.Item eventKey="Powder">Powder</Dropdown.Item>
+                      <Dropdown.Item eventKey="Compact">Compact</Dropdown.Item>
+                    </Dropdown.Menu>
+                  </Dropdown>
+                </Form.Group>
 
-                <Dropdown onSelect={(eventKey) => setPreference({ ...preference, status: eventKey })}>
-                  <Dropdown.Toggle className="btn-primary">Activity Status</Dropdown.Toggle>
-                  <Dropdown.Menu>
-                    <Dropdown.Item eventKey="At the Mountain">At the Mountain</Dropdown.Item>
-                    <Dropdown.Item eventKey="At the Lodge">At the Lodge</Dropdown.Item>
-                  </Dropdown.Menu>
-                </Dropdown>
-              </Form.Group>
+                {/* Activity Status Dropdown */}
+                <Form.Group>
+                  <Dropdown onSelect={(eventKey) => setPreference({ ...preference, status: eventKey })}>
+                    <Dropdown.Toggle className="bg-blue-600 text-white border-none hover:bg-blue-700 transition duration-200">
+                      Activity Status: {preference.status || 'Select your status'}
+                    </Dropdown.Toggle>
+                    <Dropdown.Menu>
+                      <Dropdown.Item eventKey="At the Mountain">At the Mountain</Dropdown.Item>
+                      <Dropdown.Item eventKey="At the Lodge">At the Lodge</Dropdown.Item>
+                    </Dropdown.Menu>
+                  </Dropdown>
+                </Form.Group>
 
-              <Button className="mt-4" onClick={() => { handleUploadModal(); startCamera(); }}>
-                Capture Profile Picture
-              </Button>
+                {/* Express Yourself Section */}
+                <Form.Group>
+                  <h2 className="text-lg font-bold text-gray-800">Express Yourself:</h2>
+                  <Form.Control 
+                    as="textarea" 
+                    rows={3} 
+                    placeholder="Share your thoughts..." 
+                    className="mt-2"
+                  />
+                </Form.Group>
+              </div>
+
+              {/* Upload Buttons */}
+              <div className="mt-4 flex justify-between">
+                <Button 
+                  className="w-1/2 bg-blue-600 text-white hover:bg-blue-700 transition duration-200" 
+                  onClick={() => { handleUploadModal(); startCamera(); }}
+                >
+                  Capture Profile Picture
+                </Button>
+                <input 
+                  type="file" 
+                  accept="image/*" 
+                  onChange={handleFileUpload} 
+                  className="w-1/2 ml-2"
+                />
+              </div>
+
+              {/* Save Profile Picture Button */}
+              {capturedImage && (
+                <Button
+                  variant="success"
+                  className="mt-4"
+                  onClick={handleSaveProfilePicture}
+                >
+                  Save as Profile Picture
+                </Button>
+              )}
 
             </div>
             <Button variant="primary" className="mt-6" onClick={handleShow}>
@@ -132,34 +203,39 @@ const PrivateUserProfile = () => {
               <Modal.Header closeButton>
                 <Modal.Title>Log Out</Modal.Title>
               </Modal.Header>
-              <Modal.Body>Are you sure you want to Log Out?</Modal.Body>
+              <Modal.Body>Are you sure you want to log out?</Modal.Body>
               <Modal.Footer>
                 <Button variant="secondary" onClick={handleClose}>Close</Button>
                 <Button variant="primary" onClick={handleLogout}>Yes</Button>
               </Modal.Footer>
             </Modal>
 
-            {/* Camera Modal */}
-            <Modal show={uploadModal} onHide={handleClose} backdrop="static" keyboard={false}>
-              <Modal.Header closeButton>
-                <Modal.Title>Take a Photo</Modal.Title>
-              </Modal.Header>
-              <Modal.Body>
-                <video ref={videoRef} className="w-full rounded-lg" />
-                <canvas ref={canvasRef} className="w-full mt-4 rounded-lg" />
-                <Button variant="primary" className="mt-4" onClick={capturePhoto}>
-                  Capture
-                </Button>
-              </Modal.Body>
-              <Modal.Footer>
-                <Button variant="secondary" onClick={handleClose}>Close</Button>
-              </Modal.Footer>
-            </Modal>
-          </Card.Body>
-        </Card>
+            
+              {/* Camera Modal */}
+              <Modal show={uploadModal} onHide={handleClose}>
+                <Modal.Header closeButton>
+                  <Modal.Title>Capture Profile Picture</Modal.Title>
+                </Modal.Header>
+                <Modal.Body>
+                  <div className="flex justify-center">
+                    <video ref={videoRef} className="w-full h-auto border" />
+                    <canvas ref={canvasRef} className="hidden" />
+                  </div>
+                  <Button className="mt-2" onClick={capturePhoto}>
+                    Capture Photo
+                  </Button>
+                </Modal.Body>
+                <Modal.Footer>
+                  <Button variant="secondary" onClick={handleClose}>
+                    Close
+                  </Button>
+                </Modal.Footer>
+              </Modal>
+            </Card.Body>
+          </Card>
+        </div>
       </div>
-    </div>
-  );
+    );
 };
 
 export default PrivateUserProfile;
