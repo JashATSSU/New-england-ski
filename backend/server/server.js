@@ -10,6 +10,8 @@ const getUserByIdRoute = require('./routes/userGetUserById');
 const editUser = require('./routes/userEditUser');
 const deleteUser = require('./routes/userDeleteAll');
 const skiResortsRoute = require('./routes/skiResorts');
+const User = require('./models/userModel'); // Import User model for updating profile picture
+
 dotenv.config();
 
 const app = express();
@@ -19,12 +21,14 @@ const SERVER_PORT = 8081;
 mongoose.connect(process.env.DB_URL, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
-});
-mongoose.set('strictQuery', false);
+})
+.then(() => console.log("Connected to MongoDB"))
+.catch(err => console.error("MongoDB connection error:", err));
 
 // Middleware setup
 app.use(cors({ origin: '*' }));
 app.use(express.json({ limit: '10mb' })); // Increase limit for larger images
+
 // User-related routes
 app.use('/user', loginRoute);
 app.use('/user', registerRoute);
@@ -32,8 +36,10 @@ app.use('/user', getAllUsersRoute);
 app.use('/user', getUserByIdRoute);
 app.use('/user', editUser);
 app.use('/user', deleteUser);
+
 // Ski resorts route
 app.use('/api/resortview', skiResortsRoute);
+
 // Configure AWS SDK for S3
 AWS.config.update({
   accessKeyId: process.env.AWS_ACCESS_KEY_ID,
@@ -43,26 +49,36 @@ AWS.config.update({
 
 const s3 = new AWS.S3();
 
-// S3 Profile picture upload route
 app.post('/api/upload-profile-picture', async (req, res) => {
-  const { image } = req.body; // Get the base64 image string
+  const { image, userId } = req.body; // Get the base64 image string and userId
 
   // Convert base64 string to a Buffer
   const buffer = Buffer.from(image.replace(/^data:image\/\w+;base64,/, ""), 'base64');
 
   const params = {
-    Bucket: process.env.S3_BUCKET_NAME,
-    Key: `SkiResortProfile pictures/${Date.now()}.png`, // Use a unique name for the file
-    Body: buffer,
-    ContentType: 'image/png',
+      Bucket: process.env.S3_BUCKET_NAME,
+      Key: `SkiResortProfilePictures/${Date.now()}.png`, // Use a unique name for the file
+      Body: buffer,
+      ContentType: 'image/png',
   };
 
   try {
-    const data = await s3.upload(params).promise();
-    res.json({ imageUrl: data.Location }); // Return the uploaded file's S3 URL
+      const data = await s3.upload(params).promise();
+      console.log("Uploaded to S3:", data.Location);
+      
+      // Update user's profile picture URL in MongoDB
+      const updatedUser = await User.findByIdAndUpdate(userId, { profilePictureUrl: data.Location }, { new: true });
+      
+      if (!updatedUser) {
+          console.error("User not found:", userId);
+          return res.status(404).json({ error: 'User not found' });
+      }
+
+      console.log("User updated:", updatedUser);
+      res.json({ imageUrl: data.Location, updatedUser });
   } catch (error) {
-    console.error('Error uploading file to S3:', error);
-    res.status(500).json({ error: 'Error uploading file to S3', details: error });
+      console.error('Error uploading file to S3 or updating MongoDB:', error);
+      res.status(500).json({ error: 'Error uploading file to S3 or updating MongoDB', details: error });
   }
 });
 
