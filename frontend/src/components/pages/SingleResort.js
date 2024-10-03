@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import './SingleResort.css'; // Make sure to create this CSS file for styling
+import './SingleResort.css';
 import { resortsList } from './resortsData'; // Import the resorts list
 
 const SingleResort = ({ resort }) => {
@@ -15,40 +15,16 @@ const SingleResort = ({ resort }) => {
     setError(null);
 
     try {
-      // Fetch lift status
-      const resortResponse = await axios.get(`https://ski-resorts-and-conditions.p.rapidapi.com/v1/resort/${resort.slug}`, {
-        headers: {
-          'X-RapidAPI-Key': process.env.REACT_APP_RAPIDAPI_KEY,
-          'X-RapidAPI-Host': process.env.REACT_APP_RAPIDAPI_HOST,
-        },
-      });
+      // Fetch resort details from your backend
+      const resortResponse = await axios.get(`${process.env.REACT_APP_BACKEND_SERVER_URI}/api/resortview/${resort.slug}`);
       setResortDetails(resortResponse.data);
 
-      // Fetch forecast
-      const forecastResponse = await axios.get(`https://ski-resort-forecast.p.rapidapi.com/${resort.name}/forecast`, {
-        headers: {
-          'X-RapidAPI-Key': process.env.REACT_APP_RAPIDAPI_KEY,
-          'X-RapidAPI-Host': process.env.REACT_APP_RESORT_FORECAST_HOST,
-        },
-        params: {
-          units: 'i',
-          el: 'top',
-        },
-      });
+      // Fetch forecast from your backend (assuming you have a similar endpoint for forecasts)
+      const forecastResponse = await axios.get(`${process.env.REACT_APP_BACKEND_SERVER_URI}/api/resortview/${resort.slug}/forecast`);
       setForecast(forecastResponse.data);
 
-      // Fetch hourly forecast
-      const hourlyResponse = await axios.get(`https://ski-resort-forecast.p.rapidapi.com/${resort.name}/hourly`, {
-        headers: {
-          'X-RapidAPI-Key': process.env.REACT_APP_RAPIDAPI_KEY,
-          'X-RapidAPI-Host': process.env.REACT_APP_RESORT_FORECAST_HOST,
-        },
-        params: {
-          units: 'i',
-          el: 'top',
-          c: false,
-        },
-      });
+      // Fetch hourly forecast from your backend (assuming you have a similar endpoint for hourly forecasts)
+      const hourlyResponse = await axios.get(`${process.env.REACT_APP_BACKEND_SERVER_URI}/api/resortview/${resort.slug}/hourly`);
       setHourlyForecast(hourlyResponse.data);
 
     } catch (error) {
@@ -76,13 +52,11 @@ const SingleResort = ({ resort }) => {
     <li className="resort">
       <h3>{resort.name}</h3>
       <p>{selectedResort.description || 'No description available.'}</p>
-      <p><em>{selectedResort.motto}</em></p> {/* Display the motto */}
+      <p><em>{selectedResort.motto}</em></p>
 
-      {/* Lift Status */}
       <h4>Lift Status</h4>
       <p>{lifts ? `Open: ${lifts.stats.open}, Closed: ${lifts.stats.closed}` : 'No lift status available'}</p>
 
-      {/* Forecast */}
       <h4>Five Day Forecast</h4>
       <div className="forecast">
         {forecast.forecast5Day.map((day, index) => (
@@ -97,7 +71,6 @@ const SingleResort = ({ resort }) => {
         ))}
       </div>
 
-      {/* Hourly Forecast */}
       <h4>Hourly Forecast</h4>
       <div className="hourly-forecast">
         {hourlyForecast.forecast.map((hour, index) => (
