@@ -44,7 +44,7 @@ const SearchSkiResorts = () => {
 
     try {
       const response = await axios.get(
-        `https://ski-resorts-and-conditions.p.rapidapi.com/v1/resort/${searchQuery}`,
+        `http://localhost:8081/api/resortview/${searchQuery}`,
         {
           headers: {
             'X-RapidAPI-Key': process.env.REACT_APP_RAPIDAPI_KEY,
