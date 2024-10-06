@@ -14,7 +14,7 @@ const resortsList = [
   'killington',
   'stratton',
   'okemo',
-  'mount-snow',
+  'mountsnow',
   'mohawk-trail',
   'great-glen',
   'wildcat',

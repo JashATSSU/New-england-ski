@@ -57,6 +57,9 @@ const SingleResort = ({ resort }) => {
       <h4>Lift Status</h4>
       <p>{lifts ? `Open: ${lifts.stats.open}, Closed: ${lifts.stats.closed}` : 'No lift status available'}</p>
 
+      
+  return (
+    <div>
       <h4>Five Day Forecast</h4>
       <div className="forecast">
         {forecast.forecast5Day.map((day, index) => (
@@ -71,6 +74,16 @@ const SingleResort = ({ resort }) => {
         ))}
       </div>
 
+      {/* Display additional summaries */}
+      <div className="additional-summaries">
+        <h4>3-Day Summary</h4>
+        <p>{forecast.summary3Day}</p>
+
+        <h4>Summary for Days 4-6</h4>
+        <p>{forecast.summaryDays4To6}</p>
+      </div>
+    </div>
+ 
       <h4>Hourly Forecast</h4>
       <div className="hourly-forecast">
         {hourlyForecast.forecast.map((hour, index) => (
