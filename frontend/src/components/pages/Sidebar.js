@@ -2,69 +2,44 @@ import React from 'react';
 
 // Updated list of New England ski resorts
 const resortsList = [
-  'loon',
-  'brettonwoods',
-  'attitash',
-  'sugarloaf',
-  'bolton-valley',
-  'bromley-mountain',
-  'burke-mountain',
-  'stowe',
-  'jay-peak',
-  'killington',
-  'stratton',
-  'okemo',
-  'mountsnow',
-  'mohawk-trail',
-  'great-glen',
-  'wildcat',
-  'cannon-mountain',
-  'windham',
-  // Add more resorts as needed
+  'Loon',
+  'Bretton Woods',
+  'Attitash',
+  'Sugarloaf',
+  'Bolton Valley',
+  'Bromley Mountain',
+  'Burke Mountain',
+  'Stowe',
+  'Jay Peak',
+  'Killington',
+  'Stratton',
+  'Okemo',
+  'Mount Snow',
+  'Wildcat',
+  'Cannon',
+  'Windham',
 ];
 
 const Sidebar = ({ onSelect }) => {
   return (
-    <div className="sidebar">
-      <h3>New England Ski Resorts Reference List</h3>
-      <ul>
-        {resortsList.map((resort, index) => (
-          <li key={index} onClick={() => onSelect(resort)} className="sidebar-item">
-            {resort}
-          </li>
-        ))}
-      </ul>
-      <style jsx>{`
-        .sidebar {
-          width: 250px;
-          padding: 20px;
-          background: #f1f1f1;
-          border-right: 1px solid #ddd;
-          position: relative; /* Change to relative */
-          height: auto; /* Allow height to adjust dynamically */
-          overflow-y: auto; /* Add scroll if content overflows */
-          max-height: calc(100vh - 55px); /* Keep the maximum height within the viewport */
-        }
-        
-        .sidebar h3 {
-          margin-top: 0;
-        }
-
-        .sidebar ul {
-          list-style: none;
-          padding: 0;
-        }
-
-        .sidebar-item {
-          padding: 10px;
-          cursor: pointer;
-          transition: background-color 0.3s;
-        }
-
-        .sidebar-item:hover {
-          background-color: #ddd;
-        }
-      `}</style>
+    <div className="sidebar bg-gray-200 p-6 border-r border-gray-300 h-screen shadow-lg flex flex-col">
+      <h3 className="text-xl font-bold mb-5 text-gray-800 text-center">New England Ski Resorts</h3>
+      <div className="flex-grow overflow-y-scroll scrollbar-thin scrollbar-thumb-blue-500 scrollbar-thumb-rounded">
+        <ul className="space-y-3">
+          {resortsList.map((resort, index) => (
+            <li 
+              key={index} 
+              onClick={() => onSelect(resort.toLowerCase().replace(' ', '-'))}
+              className="cursor-pointer p-3 rounded-lg bg-white shadow hover:bg-blue-500 hover:text-white transition duration-200 ease-in-out transform hover:scale-105"
+            >
+              {resort}
+            </li>
+          ))}
+        </ul>
+      </div>
+      <div className="mt-4 text-center">
+        <p className="text-sm text-gray-600">Select a resort to view details</p>
+      </div>
     </div>
   );
 };

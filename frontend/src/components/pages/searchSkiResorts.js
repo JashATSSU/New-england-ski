@@ -21,8 +21,8 @@ const SearchSkiResorts = () => {
 
   if (!user) {
     return (
-      <div style={styles.container}>
-        <h4 style={styles.message}>Log in to view this page.</h4>
+      <div className="flex justify-center items-center h-screen text-center">
+        <h4 className="text-2xl text-gray-800">Log in to view this page.</h4>
       </div>
     );
   }
@@ -82,124 +82,42 @@ const SearchSkiResorts = () => {
   };
 
   return (
-    <div className="search-container">
+    <div className="flex min-h-screen bg-gray-100">
       <Sidebar onSelect={handleSelectResort} /> {/* Include Sidebar here */}
-      <div className="main-content">
-        <h2>Search for Ski Resorts</h2>
-        <div className="search-bar">
+      <div className="flex-1 ml-64 p-8">
+        <h2 className="text-3xl text-gray-800 mb-6">Search for Ski Resorts</h2>
+        <div className="flex justify-center mb-6">
           <input
             type="text"
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder="Enter resort name"
-            className="search-input"
+            className="w-full max-w-md p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
           />
-          <button onClick={handleSearch} className="search-button">
+          <button
+            onClick={handleSearch}
+            className="ml-4 p-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+          >
             Search
           </button>
         </div>
 
         {loading ? (
-          <p className="loading-text">Loading resort details...</p>
+          <p className="text-gray-600">Loading resort details...</p>
         ) : error ? (
-          <p className="error-text">{error}</p>
+          <p className="text-red-500">{error}</p>
         ) : resorts.length > 0 ? (
-          <ul className="resort-list">
+          <ul className="list-none p-0">
             {resorts.map((resort, index) => (
               <SingleResort key={index} resort={resort} />
             ))}
           </ul>
         ) : (
-          <p className="no-results-text">No resort found. Try a different search.</p>
+          <p className="text-gray-600">No resort found. Try a different search.</p>
         )}
       </div>
-
-      <style jsx>{`
-        .search-container {
-          display: flex;
-        }
-
-        .main-content {
-          flex: 1;
-          margin-left: 260px;
-          padding: 20px;
-        }
-
-        h2 {
-          color: #333;
-          margin-bottom: 20px;
-        }
-
-        .search-bar {
-          display: flex;
-          justify-content: center;
-          margin-bottom: 20px;
-        }
-
-        .search-input {
-          width: 100%;
-          max-width: 400px;
-          padding: 10px;
-          border: 1px solid #ddd;
-          border-radius: 4px;
-          font-size: 16px;
-          margin-right: 10px;
-          outline: none;
-          transition: border-color 0.3s;
-        }
-
-        .search-input:focus {
-          border-color: #007bff;
-        }
-
-        .search-button {
-          padding: 10px 20px;
-          border: none;
-          border-radius: 4px;
-          background-color: #007bff;
-          color: #fff;
-          font-size: 16px;
-          cursor: pointer;
-          transition: background-color 0.3s;
-        }
-
-        .search-button:hover {
-          background-color: #0056b3;
-        }
-
-        .loading-text,
-        .error-text,
-        .no-results-text {
-          color: #555;
-        }
-
-        .resort-list {
-          list-style: none;
-          padding: 0;
-          margin: 0;
-        }
-
-        .resort-list li {
-          padding: 10px;
-          border-bottom: 1px solid #ddd;
-        }
-      `}</style>
     </div>
   );
-};
-
-const styles = {
-  container: {
-    display: 'flex',
-    justifyContent: 'center',
-    alignItems: 'center',
-    height: '100vh',
-    textAlign: 'center',
-  },
-  message: {
-    color: '#333',
-    fontSize: '1.5rem',
-  },
 };
 
 export default SearchSkiResorts;

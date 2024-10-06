@@ -45,58 +45,63 @@ const SingleResort = ({ resort }) => {
 
   const { lifts } = resortDetails.data;
 
-  // Find the selected resort's motto
+  // Find the selected resort's motto and description
   const selectedResort = resortsList.find(r => r.name === resort.name);
 
   return (
-    <li className="resort">
+    <div className="resort-details">
       <h3>{resort.name}</h3>
-      <p>{selectedResort.description || 'No description available.'}</p>
-      <p><em>{selectedResort.motto}</em></p>
+      <p>{selectedResort?.description || 'No description available.'}</p>
+      <p><em>{selectedResort?.motto || 'No motto available.'}</em></p>
 
       <h4>Lift Status</h4>
       <p>{lifts ? `Open: ${lifts.stats.open}, Closed: ${lifts.stats.closed}` : 'No lift status available'}</p>
-
-      
-  return (
-    <div>
-      <h4>Five Day Forecast</h4>
-      <div className="forecast">
-        {forecast.forecast5Day.map((day, index) => (
-          <div key={index} className="forecast-day">
-            <h5>{day.dayOfWeek}</h5>
-            <div className="forecast-details">
-              <p><strong>AM:</strong> {day.am.summary} | Max Temp: {day.am.maxTemp} | Min Temp: {day.am.minTemp}</p>
-              <p><strong>PM:</strong> {day.pm.summary} | Max Temp: {day.pm.maxTemp} | Min Temp: {day.pm.minTemp}</p>
-              <p><strong>Night:</strong> {day.night.summary} | Max Temp: {day.night.maxTemp} | Min Temp: {day.night.minTemp}</p>
-            </div>
+      {/* Five Day Forecast */}
+      {forecast && forecast.forecast5Day && (
+        <div>
+          <h4>Five Day Forecast</h4>
+          <div className="forecast">
+            {forecast.forecast5Day.map((day, index) => (
+              <div key={index} className="forecast-day">
+                <h5>{day.dayOfWeek}</h5>
+                <div className="forecast-details">
+                  <p><strong>AM:</strong> {day.am.summary} | Max Temp: {day.am.maxTemp} | Min Temp: {day.am.minTemp}</p>
+                  <p><strong>PM:</strong> {day.pm.summary} | Max Temp: {day.pm.maxTemp} | Min Temp: {day.pm.minTemp}</p>
+                  <p><strong>Night:</strong> {day.night.summary} | Max Temp: {day.night.maxTemp} | Min Temp: {day.night.minTemp}</p>
+                </div>
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
 
-      {/* Display additional summaries */}
-      <div className="additional-summaries">
-        <h4>3-Day Summary</h4>
-        <p>{forecast.summary3Day}</p>
+          {/* Display additional summaries */}
+          <div className="additional-summaries">
+            <h4>3-Day Summary</h4>
+            <p>{forecast.summary3Day}</p>
 
-        <h4>Summary for Days 4-6</h4>
-        <p>{forecast.summaryDays4To6}</p>
-      </div>
-    </div>
- 
-      <h4>Hourly Forecast</h4>
-      <div className="hourly-forecast">
-        {hourlyForecast.forecast.map((hour, index) => (
-          <div key={index} className="hourly-item">
-            <p><strong>{hour.time}:</strong> {hour.summary} | Temp: {hour.maxTemp} | Wind: {hour.windSpeed} {hour.windDirection}</p>
+            <h4>Summary for Days 4-6</h4>
+            <p>{forecast.summaryDays4To6}</p>
           </div>
-        ))}
-      </div>
+        </div>
+      )}
+
+      {/* Hourly Forecast */}
+      {hourlyForecast && hourlyForecast.forecast && (
+        <div>
+          <h4>Hourly Forecast</h4>
+          <div className="hourly-forecast">
+            {hourlyForecast.forecast.map((hour, index) => (
+              <div key={index} className="hourly-item">
+                <p><strong>{hour.time}:</strong> {hour.summary} | Temp: {hour.maxTemp} | Wind: {hour.windSpeed} {hour.windDirection}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       <a href={resort.href} target="_blank" rel="noopener noreferrer">
-        More Details
+      Explore More at the Ski Resort!      
       </a>
-    </li>
+    </div>
   );
 };
 

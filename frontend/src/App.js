@@ -1,4 +1,4 @@
-// App.js
+// src/App.js
 import React from "react";
 import { Route, Routes } from "react-router-dom";
 import Navbar from "./components/navbar";
@@ -9,6 +9,7 @@ import Signup from "./components/pages/registerPage";
 import PrivateUserProfile from "./components/pages/privateUserProfilePage";
 import ResortDetails from "./components/pages/resortDetails";
 import SearchSkiResorts from "./components/pages/searchSkiResorts";
+import MapSearch from './components/pages/MapSearch'; // Make sure this path is correct
 import './index.css';
 
 const App = () => {
@@ -23,9 +24,10 @@ const App = () => {
         <Route path="/privateUserProfile" element={<PrivateUserProfile />} />
         <Route path="/searchSkiResorts" element={<SearchSkiResorts />} />
         <Route path="/resortDetails/:name" element={<ResortDetails />} />
+        <Route path="/MapSearch" element={<MapSearch />} /> {/* Change component to element */}
       </Routes>
     </>
   );
 };
 
-export default App
+export default App;

@@ -68,6 +68,17 @@ const styles = {
         fontSize: '2rem',
         marginBottom: '0.5rem',
     },
+    container: {
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100vh',
+        textAlign: 'center',
+      },
+      message: {
+        color: '#333',
+        fontSize: '1.5rem',
+      },
     cardText: {
         fontSize: '1.2rem',
     },

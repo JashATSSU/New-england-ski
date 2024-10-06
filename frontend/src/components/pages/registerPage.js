@@ -4,15 +4,14 @@ import axios from "axios";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 
-const PRIMARY_COLOR = "#cc5c99";
-const SECONDARY_COLOR = "#0c0c1f";
-const  url = `${process.env.REACT_APP_BACKEND_SERVER_URI}/user/signup`;
+const url = `${process.env.REACT_APP_BACKEND_SERVER_URI}/user/signup`;
+
 const Register = () => {
   const [data, setData] = useState({ username: "", email: "", password: "" });
   const [error, setError] = useState("");
   const navigate = useNavigate();
   const [light, setLight] = useState(false);
-  const [bgColor, setBgColor] = useState(SECONDARY_COLOR);
+  const [bgColor, setBgColor] = useState("bg-gray-800");
   const [bgText, setBgText] = useState("Light Mode");
 
   const handleChange = ({ currentTarget: input }) => {
@@ -21,32 +20,20 @@ const Register = () => {
 
   useEffect(() => {
     if (light) {
-      setBgColor("white");
-      setBgText("Dark mode");
+      setBgColor("bg-white");
+      setBgText("Dark Mode");
     } else {
-      setBgColor(SECONDARY_COLOR);
-      setBgText("Light mode");
+      setBgColor("bg-gray-800");
+      setBgText("Light Mode");
     }
   }, [light]);
-
-  let labelStyling = {
-    color: PRIMARY_COLOR,
-    fontWeight: "bold",
-    textDecoration: "none",
-  };
-  let backgroundStyling = { background: bgColor };
-  let buttonStyling = {
-    background: PRIMARY_COLOR,
-    borderStyle: "none",
-    color: bgColor,
-  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
       const { data: res } = await axios.post(url, data);
-      const {accessToken} = res
-      //store token in localStorage
+      const { accessToken } = res;
+      // store token in localStorage
       navigate("/login");
     } catch (error) {
       if (
@@ -60,85 +47,78 @@ const Register = () => {
   };
 
   return (
-    <>
-      <section className="vh-100">
-        <div className="container-fluid h-custom vh-100">
-          <div
-            className="row d-flex justify-content-center align-items-center h-100 "
-            style={backgroundStyling}
-          >
-            <div className="col-md-8 col-lg-6 col-xl-4 offset-xl-1">
-              <Form>
-                <Form.Group className="mb-3" controlId="formBasicEmail">
-                  <Form.Label style={labelStyling}>Username</Form.Label>
-                  <Form.Control
-                    type="username"
-                    name="username"
-                    onChange={handleChange}
-                    placeholder="Enter username"
-                  />
-                  <Form.Text className="text-muted">
-                    We just might sell your data
-                  </Form.Text>
-                </Form.Group>
-                <Form.Group className="mb-3" controlId="formBasicEmail">
-                  <Form.Label style={labelStyling}>Email</Form.Label>
-                  <Form.Control
-                    type="email"
-                    name="email"
-                    onChange={handleChange}
-                    placeholder="Enter Email Please"
-                  />
-                  <Form.Text className="text-muted">
-                    We just might sell your data
-                  </Form.Text>
-                </Form.Group>
-                <Form.Group className="mb-3" controlId="formBasicPassword">
-                  <Form.Label style={labelStyling}>Password</Form.Label>
-                  <Form.Control
-                    type="password"
-                    name="password"
-                    placeholder="Password"
-                    onChange={handleChange}
-                  />
-                </Form.Group>
-                <div class="form-check form-switch">
-                  <input
-                    class="form-check-input"
-                    type="checkbox"
-                    id="flexSwitchCheckDefault"
-                    onChange={() => {
-                      setLight(!light);
-                    }}
-                  />
-                  <label
-                    class="form-check-label"
-                    for="flexSwitchCheckDefault"
-                    className="text-muted"
-                  >
-                    {bgText}
-                  </label>
-                </div>
-                {error && (
-                  <div style={labelStyling} className="pt-3">
-                    {error}
-                  </div>
-                )}
-                <Button
-                  variant="primary"
-                  type="submit"
-                  onClick={handleSubmit}
-                  style={buttonStyling}
-                  className="mt-2"
-                >
-                  Register
-                </Button>
-              </Form>
+    <section className={`h-screen flex items-center justify-center ${bgColor}`}>
+      <div className="w-full max-w-md">
+        <div className="bg-white rounded-lg shadow-lg p-8">
+          <h2 className="text-2xl font-bold text-center mb-6">Register</h2>
+          <Form onSubmit={handleSubmit}>
+            <Form.Group className="mb-4">
+              <Form.Label>Username</Form.Label>
+              <Form.Control
+                type="text"
+                name="username"
+                onChange={handleChange}
+                placeholder="Enter username"
+                className="border rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                required
+              />
+              <Form.Text className="text-gray-500">
+                We just might sell your data.
+              </Form.Text>
+            </Form.Group>
+
+            <Form.Group className="mb-4">
+              <Form.Label>Email</Form.Label>
+              <Form.Control
+                type="email"
+                name="email"
+                onChange={handleChange}
+                placeholder="Enter Email Please"
+                className="border rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                required
+              />
+              <Form.Text className="text-gray-500">
+                We just might sell your data.
+              </Form.Text>
+            </Form.Group>
+
+            <Form.Group className="mb-4">
+              <Form.Label>Password</Form.Label>
+              <Form.Control
+                type="password"
+                name="password"
+                placeholder="Password"
+                onChange={handleChange}
+                className="border rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                required
+              />
+            </Form.Group>
+
+            <div className="flex items-center mb-4">
+              <input
+                type="checkbox"
+                className="form-checkbox h-5 w-5 text-blue-600"
+                onChange={() => {
+                  setLight(!light);
+                }}
+              />
+              <label className="ml-2 text-gray-700">{bgText}</label>
             </div>
-          </div>
+
+            {error && (
+              <div className="text-red-500 mb-4">{error}</div>
+            )}
+            <Button
+              variant="primary"
+              type="submit"
+              className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
+            >
+              Register
+            </Button>
+          </Form>
         </div>
-      </section>
-    </>
+      </div>
+    </section>
   );
 };
 
