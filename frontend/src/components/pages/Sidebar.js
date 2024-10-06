@@ -3,7 +3,7 @@ import React from 'react';
 // Updated list of New England ski resorts
 const resortsList = [
   'Loon',
-  'Bretton Woods',
+  'brettonwoods',
   'Attitash',
   'Sugarloaf',
   'Bolton Valley',
@@ -14,7 +14,7 @@ const resortsList = [
   'Killington',
   'Stratton',
   'Okemo',
-  'Mount Snow',
+  'mountsnow',
   'Wildcat',
   'Cannon',
   'Windham',
