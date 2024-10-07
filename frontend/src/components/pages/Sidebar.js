@@ -11,7 +11,7 @@ const resortsList = [
   'Burke Mountain',
   'Stowe',
   'Jay Peak',
-  'Killington',
+  'killington',
   'Stratton',
   'Okemo',
   'mountsnow',
