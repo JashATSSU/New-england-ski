@@ -56,8 +56,9 @@ const SingleResort = ({ resort }) => {
 
       <h4>Lift Status</h4>
       <p>{lifts ? `Open: ${lifts.stats.open}, Closed: ${lifts.stats.closed}` : 'No lift status available'}</p>
+
       {/* Five Day Forecast */}
-      {forecast && forecast.forecast5Day && (
+      {forecast && forecast.forecast5Day && forecast.forecast5Day.length > 0 ? (
         <div>
           <h4>Five Day Forecast</h4>
           <div className="forecast">
@@ -82,10 +83,12 @@ const SingleResort = ({ resort }) => {
             <p>{forecast.summaryDays4To6}</p>
           </div>
         </div>
+      ) : (
+        <p>No 5-day forecast available.</p>
       )}
 
       {/* Hourly Forecast */}
-      {hourlyForecast && hourlyForecast.forecast && (
+      {hourlyForecast && hourlyForecast.forecast && hourlyForecast.forecast.length > 0 ? (
         <div>
           <h4>Hourly Forecast</h4>
           <div className="hourly-forecast">
@@ -96,10 +99,12 @@ const SingleResort = ({ resort }) => {
             ))}
           </div>
         </div>
+      ) : (
+        <p>No hourly forecast available for this resort.</p>
       )}
 
       <a href={resort.href} target="_blank" rel="noopener noreferrer">
-      Explore More at the Ski Resort!      
+        Explore More at the Ski Resort!
       </a>
     </div>
   );
