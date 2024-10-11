@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Button, Modal, Card, Image, Form, Dropdown } from "react-bootstrap";
+import { Button, Modal, Card, Image, Form } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import getUserInfo from "../../utilities/decodeJwt";
+import { getUserInfo, useUserProfile } from '../../utilities/decodeJwt';
 import axios from "axios";
 
 const PrivateUserProfile = () => {
@@ -21,7 +21,6 @@ const PrivateUserProfile = () => {
   };
 
   const handleShow = () => setShow(true);
-  const handleUploadModal = () => setUploadModal(true);
 
   const handleLogout = async () => {
     navigate("/");
@@ -53,15 +52,18 @@ const PrivateUserProfile = () => {
 
   const uploadPhoto = async (image) => {
     try {
-        const userId = user._id; // Get the logged-in user ID
+        const userId = user.id; // Get the logged-in user ID
         const response = await axios.post('http://localhost:8081/api/upload-profile-picture', {
             image: image, // Base64 image string
             userId: userId // Pass the user ID
         });
-        
-        console.log(response.data); // Logs the response from your server
+
+        // Update local user state with the new profile picture URL
+        setUser(response.data.user); // Assuming 'user' contains the updated user info
+
+        console.log("Profile picture uploaded successfully:", response.data.imageUrl);
     } catch (error) {
-        console.error('Error uploading photo:', error.response ? error.response.data : error.message); // Log the error
+        console.error('Error uploading photo:', error.response ? error.response.data : error.message);
     }
   };
 
@@ -84,9 +86,14 @@ const PrivateUserProfile = () => {
   };
 
   useEffect(() => {
-    const fetchedUser = getUserInfo();
-    setUser(fetchedUser);
-    console.log("Fetched user:", fetchedUser);
+    const fetchUser = async () => {
+        const fetchedUser = getUserInfo(); // Assuming this function gets user info from JWT
+        if (fetchedUser) {
+            setUser(fetchedUser);
+            console.log("Fetched user:", fetchedUser);
+        }
+    };
+    fetchUser();
   }, []);
 
   if (!user) return <div className="flex items-center justify-center h-screen"><h4>Log in to view this page.</h4></div>;
@@ -99,7 +106,7 @@ const PrivateUserProfile = () => {
             <div className="text-center">
               <div className="flex justify-center">
                 <Image
-                  src={user.profilePictureUrl || capturedImage || 'https://via.placeholder.com/150'}
+                  src={user.profilePictureUrl || capturedImage} // Display either the URL from MongoDB or the captured image
                   className="w-48 h-48 object-cover rounded-full border-4 border-gray-400 mx-auto"
                   alt="Profile"
                 />
@@ -135,17 +142,20 @@ const PrivateUserProfile = () => {
         <Modal.Body>
           <video ref={videoRef} width="100%" />
           <canvas ref={canvasRef} style={{ display: "none" }} />
-          <Button variant="primary" onClick={startCamera}>Start Camera</Button>
-          <Button variant="secondary" onClick={capturePhoto}>Capture Photo</Button>
-          <Form.Group controlId="formFile">
-            <Form.Label>Or Upload from File</Form.Label>
-            <Form.Control type="file" accept="image/*" onChange={handleFileUpload} />
-          </Form.Group>
+          <div className="flex justify-between">
+            <Button onClick={startCamera} className="mt-3">Start Camera</Button>
+            <Button onClick={capturePhoto} className="mt-3">Capture Photo</Button>
+          </div>
+          <input type="file" accept="image/*" onChange={handleFileUpload} className="mt-3" />
           {capturedImage && <Image src={capturedImage} className="mt-3" />}
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={handleClose}>Close</Button>
-          <Button variant="primary" onClick={handleSaveProfilePicture}>Save Changes</Button>
+          <Button variant="secondary" onClick={handleClose}>
+            Close
+          </Button>
+          <Button variant="primary" onClick={handleSaveProfilePicture}>
+            Save Changes
+          </Button>
         </Modal.Footer>
       </Modal>
     </div>

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import SingleResort from './SingleResort';
 import Sidebar from './Sidebar'; // Import the Sidebar component
-import getUserInfo from '../../utilities/decodeJwt';
+import { getUserInfo } from '../../utilities/decodeJwt';
 import { useNavigate } from 'react-router-dom';
 
 const cache = {}; // In-memory cache object

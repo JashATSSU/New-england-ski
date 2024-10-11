@@ -24,7 +24,7 @@ const newUserSchema = new mongoose.Schema({
   },
   profilePictureUrl: {
     type: String, // Field for the profile picture URL
-    default: "arn:aws:s3:::capstone-project-2024/SkiResortProfilePictures/", 
+    default: null, 
 
   },
 }, { collection: 'users' }); // Collection name

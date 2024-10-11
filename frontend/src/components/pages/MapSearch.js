@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { jsPDF } from 'jspdf';
 import { useNavigate } from 'react-router-dom';
-import getUserInfo from '../../utilities/decodeJwt'; // Adjust the path if necessary
+import { getUserInfo } from '../../utilities/decodeJwt';
 
 // List of ski map images
 const skiMaps = [

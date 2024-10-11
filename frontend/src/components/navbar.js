@@ -1,6 +1,6 @@
 // src/components/navbar.js
 import React, { useEffect, useState } from "react";
-import getUserInfo from '../utilities/decodeJwt';
+import { getUserInfo, useUserProfile } from '../utilities/decodeJwt';
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import ReactNavbar from 'react-bootstrap/Navbar';

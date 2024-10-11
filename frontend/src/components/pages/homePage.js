@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import getUserInfo from '../../utilities/decodeJwt';
+import { getUserInfo } from '../../utilities/decodeJwt';
 import Slideshow from './Slideshow'; // Import Slideshow component
 
 const HomePage = () => {

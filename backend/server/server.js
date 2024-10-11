@@ -49,6 +49,7 @@ AWS.config.update({
 
 const s3 = new AWS.S3();
 
+// Endpoint to upload profile picture
 app.post('/api/upload-profile-picture', async (req, res) => {
   const { image, userId } = req.body; // Get the base64 image string and userId
 
@@ -75,7 +76,7 @@ app.post('/api/upload-profile-picture', async (req, res) => {
       }
 
       console.log("User updated:", updatedUser);
-      res.json({ imageUrl: data.Location, updatedUser });
+      res.json({ imageUrl: data.Location, user: updatedUser });
   } catch (error) {
       console.error('Error uploading file to S3 or updating MongoDB:', error);
       res.status(500).json({ error: 'Error uploading file to S3 or updating MongoDB', details: error });
