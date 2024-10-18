@@ -3,28 +3,16 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 
 const resorts = [
   { 
-    name: 'Sunday River', 
-    webcam: ['https://www.youtube.com/embed/J98tW5YX4Z8'] 
-  },
-  { 
     name: 'Attitash Mountain', 
     webcam: ['https://www.youtube.com/embed/B32BbIXgHWw'] 
   },
   { 
-    name: 'Killington',
-    webcam: ['https://www.youtube.com/embed/QUHuNsX6IZw']
-  },
-  { 
     name: 'Bolton Valley', 
-    webcam: ['https://www.youtube.com/embed/xWdZHDUHjv8']
+    webcam: ['https://www.youtube.com/embed/xWdZHDUHjv8'] 
   },
   { 
-    name: 'Stratton Mountain', 
-    webcam: ['https://www.youtube.com/embed/AhcH03HwuH0']
-  },
-  { 
-    name: 'Sugarloaf', 
-    webcam: ['https://www.youtube.com/embed/K77ahIkmPGw']
+    name: 'Killington',
+    webcam: ['https://www.youtube.com/embed/QUHuNsX6IZw'] 
   },
   { 
     name: 'Loon Mountain', 
@@ -32,8 +20,51 @@ const resorts = [
       'https://www.youtube.com/embed/5NUYOuzzZwc', 
       'https://www.youtube.com/embed/1ulgeNTlFJc'
     ] 
+  },
+  { 
+    name: 'Mad River Glen', 
+    webcam: ['https://www.youtube.com/embed/zMuhC48767w'] 
+  },
+  { 
+    name: 'Mount Katahdin', 
+    webcam: ['https://www.youtube.com/embed/yPyOLnDcrHA'] 
+  },
+  { 
+    name: 'Mount Washington', 
+    webcam: ['https://www.youtube.com/embed/5qVHjf7hKZU'] 
+  },
+  { 
+    name: 'Pats Peak', 
+    webcam: [
+      'https://www.youtube.com/embed/ZLsh8WsISr0',
+      'https://www.youtube.com/embed/KFjl8wPJvyg'
+    ] 
+  },  
+  { 
+    name: 'Stowe', 
+    webcam: ['https://www.youtube.com/embed/AhcH03HwuH0'] 
+  },
+  { 
+    name: 'Stratton Mountain', 
+    webcam: [
+      'https://www.youtube.com/embed/AhcH03HwuH0',
+      'https://www.youtube.com/embed/VPQaZffyviI'
+    ] 
+  },
+  { 
+    name: 'Sugarbush', 
+    webcam: ['https://www.youtube.com/embed/tdQOYaEQC3o'] 
+  },
+  { 
+    name: 'Sugarloaf', 
+    webcam: ['https://www.youtube.com/embed/K77ahIkmPGw']
+  },
+  { 
+    name: 'Sunday River', 
+    webcam: ['https://www.youtube.com/embed/J98tW5YX4Z8'] 
   }
 ];
+
 
 const SkiResortWebcam = () => {
   const [searchQuery, setSearchQuery] = useState('');
