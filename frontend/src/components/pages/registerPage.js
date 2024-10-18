@@ -62,9 +62,6 @@ const Register = () => {
                 className="border rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 required
               />
-              <Form.Text className="text-gray-500">
-                We just might sell your data.
-              </Form.Text>
             </Form.Group>
 
             <Form.Group className="mb-4">
@@ -77,9 +74,6 @@ const Register = () => {
                 className="border rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 required
               />
-              <Form.Text className="text-gray-500">
-                We just might sell your data.
-              </Form.Text>
             </Form.Group>
 
             <Form.Group className="mb-4">

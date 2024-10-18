@@ -1,0 +1,109 @@
+import React, { useState } from 'react';
+import 'bootstrap/dist/css/bootstrap.min.css';
+
+const resorts = [
+  { 
+    name: 'Sunday River', 
+    webcam: ['https://www.youtube.com/embed/J98tW5YX4Z8'] 
+  },
+  { 
+    name: 'Attitash Mountain', 
+    webcam: ['https://www.youtube.com/embed/B32BbIXgHWw'] 
+  },
+  { 
+    name: 'Killington',
+    webcam: ['https://www.youtube.com/embed/QUHuNsX6IZw']
+  },
+  { 
+    name: 'Bolton Valley', 
+    webcam: ['https://www.youtube.com/embed/xWdZHDUHjv8']
+  },
+  { 
+    name: 'Stratton Mountain', 
+    webcam: ['https://www.youtube.com/embed/AhcH03HwuH0']
+  },
+  { 
+    name: 'Sugarloaf', 
+    webcam: ['https://www.youtube.com/embed/K77ahIkmPGw']
+  },
+  { 
+    name: 'Loon Mountain', 
+    webcam: [
+      'https://www.youtube.com/embed/5NUYOuzzZwc', 
+      'https://www.youtube.com/embed/1ulgeNTlFJc'
+    ] 
+  }
+];
+
+const SkiResortWebcam = () => {
+  const [searchQuery, setSearchQuery] = useState('');
+  const [selectedResort, setSelectedResort] = useState(null);
+
+  const handleSearchChange = (e) => {
+    setSearchQuery(e.target.value);
+  };
+
+  const handleSelectResort = (resort) => {
+    setSelectedResort(resort);
+  };
+
+  const filteredResorts = resorts.filter((resort) =>
+    resort.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
+
+  return (
+    <div className="flex min-h-screen bg-gray-100">
+      {/* Sidebar */}
+      <div className="w-64 p-4 bg-white shadow-lg overflow-y-auto max-h-screen scrollbar-thin scrollbar-thumb-gray-400 scrollbar-track-gray-100">
+        <h2 className="text-xl font-bold mb-4">Ski Resorts</h2>
+        <input
+          type="text"
+          value={searchQuery}
+          onChange={handleSearchChange}
+          placeholder="Search resorts"
+          className="w-full p-2 border border-gray-300 rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-blue-500 transition"
+        />
+        <ul className="list-none">
+          {filteredResorts.map((resort, index) => (
+            <li 
+              key={index} 
+              className="cursor-pointer hover:bg-gray-200 p-2 rounded transition"
+              onClick={() => handleSelectResort(resort)}
+            >
+              {resort.name}
+            </li>
+          ))}
+        </ul>
+      </div>
+
+      {/* Main Content */}
+      <div className="flex-1 p-8">
+        <h1 className="text-3xl text-gray-800 mb-6">Webcam Feed</h1>
+
+        {selectedResort ? (
+          <div className="text-center">
+            <h2 className="text-2xl mb-4">{selectedResort.name} Webcams</h2>
+            <div className="flex justify-center gap-4">
+              {selectedResort.webcam.map((url, index) => (
+                <iframe
+                  key={index}
+                  src={url}
+                  title={`${selectedResort.name} Webcam ${index + 1}`}
+                  width="600"
+                  height="400"
+                  frameBorder="0"
+                  allowFullScreen
+                  className="border-2 border-gray-300 rounded-lg"
+                />
+              ))}
+            </div>
+          </div>
+        ) : (
+          <p className="text-center text-gray-600"></p>
+        )}
+      </div>
+    </div>
+  );
+};
+
+export default SkiResortWebcam;

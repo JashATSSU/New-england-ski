@@ -1,6 +1,6 @@
 // src/components/navbar.js
 import React, { useEffect, useState } from "react";
-import { getUserInfo, useUserProfile } from '../utilities/decodeJwt';
+import { getUserInfo } from '../utilities/decodeJwt'; // Removed unused import
 import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import ReactNavbar from 'react-bootstrap/Navbar';
@@ -23,7 +23,8 @@ export default function Navbar() {
           <Nav.Link href="/home">Home</Nav.Link>
           <Nav.Link href="/privateUserProfile">Profile</Nav.Link>
           <Nav.Link href="/searchSkiResorts">Search Ski Resorts</Nav.Link>
-          <Nav.Link href="/MapSearch">Search Trail Map</Nav.Link> {/* Ensure the case is consistent */}
+          <Nav.Link href="/MapSearch">Search Trail Map</Nav.Link> 
+          <Nav.Link href="/SkiResortWebcam">Search Resort Webcam</Nav.Link>
         </Nav>
       </Container>
     </ReactNavbar>

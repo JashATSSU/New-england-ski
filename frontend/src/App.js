@@ -9,8 +9,10 @@ import Signup from "./components/pages/registerPage";
 import PrivateUserProfile from "./components/pages/privateUserProfilePage";
 import ResortDetails from "./components/pages/resortDetails";
 import SearchSkiResorts from "./components/pages/searchSkiResorts";
-import MapSearch from './components/pages/MapSearch'; // Make sure this path is correct
+import MapSearch from './components/pages/MapSearch'; 
+import SkiResortWebcam from "./components/pages/SkiResortWebcam";
 import './index.css';
+import 'weather-icons/css/weather-icons.css';
 
 const App = () => {
   return (
@@ -24,7 +26,8 @@ const App = () => {
         <Route path="/privateUserProfile" element={<PrivateUserProfile />} />
         <Route path="/searchSkiResorts" element={<SearchSkiResorts />} />
         <Route path="/resortDetails/:name" element={<ResortDetails />} />
-        <Route path="/MapSearch" element={<MapSearch />} /> {/* Change component to element */}
+        <Route path="/MapSearch" element={<MapSearch />} />
+        <Route path="/skiResortWebcam" element={<SkiResortWebcam />} />
       </Routes>
     </>
   );

@@ -113,7 +113,7 @@ const SearchSkiResorts = () => {
             ))}
           </ul>
         ) : (
-          <p className="text-gray-600">No resort found. Try a different search.</p>
+          <p className="text-gray-600"></p>
         )}
       </div>
     </div>
