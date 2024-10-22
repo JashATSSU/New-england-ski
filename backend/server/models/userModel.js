@@ -24,7 +24,7 @@ const newUserSchema = new mongoose.Schema({
   },
   profilePictureUrl: {
     type: String, // Field for the profile picture URL
-    default: null, 
+    default: 'https://example.com/default-avatar.png', // Use a default image URL
 
   },
 }, { collection: 'users' }); // Collection name

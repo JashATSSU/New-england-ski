@@ -1,14 +1,13 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Button, Modal, Card, Image, Form } from "react-bootstrap";
+import { Button, Modal, Card, Image } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import { getUserInfo, useUserProfile } from '../../utilities/decodeJwt';
+import { getUserInfo } from '../../utilities/decodeJwt';
 import axios from "axios";
 
 const PrivateUserProfile = () => {
   const [show, setShow] = useState(false);
-  const [uploadModal, setUploadModal] = useState(false);
   const [user, setUser] = useState(null);
-  const [capturedImage, setCapturedImage] = useState(null);
+  const [capturedImage, setCapturedImage] = useState(null); // Local image state
   const [cameraStream, setCameraStream] = useState(null);
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
@@ -16,7 +15,6 @@ const PrivateUserProfile = () => {
 
   const handleClose = () => {
     setShow(false);
-    setUploadModal(false);
     if (cameraStream) cameraStream.getTracks().forEach((track) => track.stop());
   };
 
@@ -26,6 +24,7 @@ const PrivateUserProfile = () => {
     navigate("/");
   };
 
+  // Start the camera stream
   const startCamera = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ video: true });
@@ -39,6 +38,7 @@ const PrivateUserProfile = () => {
     }
   };
 
+  // Capture photo from camera
   const capturePhoto = () => {
     if (canvasRef.current && videoRef.current) {
       const context = canvasRef.current.getContext("2d");
@@ -46,56 +46,92 @@ const PrivateUserProfile = () => {
       canvasRef.current.height = videoRef.current.videoHeight;
       context.drawImage(videoRef.current, 0, 0);
       const image = canvasRef.current.toDataURL("image/png");
-      setCapturedImage(image); // Sets profile picture
+      setCapturedImage(image); // Update captured image in state
+      persistProfilePicture(image); // Force persistence of the image
     }
   };
 
+  // Function to upload the photo to the server
   const uploadPhoto = async (image) => {
     try {
-        const userId = user.id; // Get the logged-in user ID
-        const response = await axios.post('http://localhost:8081/api/upload-profile-picture', {
-            image: image, // Base64 image string
-            userId: userId // Pass the user ID
-        });
+      const userId = user.id; // Get the logged-in user ID
+      const response = await axios.post('http://localhost:8081/api/upload-profile-picture', {
+        image: image, // Base64 image string
+        userId: userId // Pass the user ID
+      });
 
-        // Update local user state with the new profile picture URL
-        setUser(response.data.user); // Assuming 'user' contains the updated user info
+      // Update the user's profile picture in state and persist it
+      const updatedUser = response.data.user;
+      setUser(updatedUser);
+      setCapturedImage(updatedUser.profilePictureUrl); // Display uploaded image
+      persistProfilePicture(updatedUser.profilePictureUrl); // Force persistence of the image
 
-        console.log("Profile picture uploaded successfully:", response.data.imageUrl);
+      console.log("Profile picture uploaded successfully:", updatedUser.profilePictureUrl);
     } catch (error) {
-        console.error('Error uploading photo:', error.response ? error.response.data : error.message);
+      console.error('Error uploading photo:', error.response ? error.response.data : error.message);
     }
   };
 
+  // Handle file upload (manual selection)
   const handleFileUpload = async (event) => {
     const file = event.target.files[0];
     if (file) {
       const reader = new FileReader();
       reader.onloadend = async () => {
         const image = reader.result;
-        setCapturedImage(image); // Sets uploaded image
+        setCapturedImage(image); // Update captured image in state
+        persistProfilePicture(image); // Force persistence of the image
       };
       reader.readAsDataURL(file);
     }
   };
 
+  // Save the profile picture (either captured or uploaded)
   const handleSaveProfilePicture = async () => {
     if (capturedImage) {
-      await uploadPhoto(capturedImage); // Upload the captured or selected image to S3
+      await uploadPhoto(capturedImage); // Upload the image to the backend
     }
   };
 
+  // Fetch the user information and profile picture from the backend
   useEffect(() => {
     const fetchUser = async () => {
-        const fetchedUser = getUserInfo(); // Assuming this function gets user info from JWT
-        if (fetchedUser) {
-            setUser(fetchedUser);
-            console.log("Fetched user:", fetchedUser);
+      const fetchedUser = getUserInfo(); // Assuming this function gets user info from JWT
+      if (fetchedUser) {
+        setUser(fetchedUser);
+
+        try {
+          const response = await axios.get(`http://localhost:8081/api/get-profile-picture/${fetchedUser.id}`);
+          const profilePicUrl = response.data.profilePictureUrl;
+
+          // Set profile picture from the backend or use previously stored one
+          setCapturedImage(profilePicUrl || localStorage.getItem('profilePicture'));
+          
+          // Persist it if it's a new one from the backend
+          if (profilePicUrl) {
+            persistProfilePicture(profilePicUrl);
+          }
+        } catch (error) {
+          console.error('Error fetching profile picture:', error);
+          // Fallback logic: use the previously saved picture (from localStorage)
+          const persistedPicture = localStorage.getItem('profilePicture');
+          if (persistedPicture) {
+            setCapturedImage(persistedPicture); // Use the persisted image if available
+          }
         }
+
+        console.log("Fetched user:", fetchedUser);
+      }
     };
     fetchUser();
   }, []);
 
+  // Persist profile picture in localStorage to ensure it stays put
+  const persistProfilePicture = (image) => {
+    localStorage.setItem('profilePicture', image); // Store the image in localStorage
+  };
+
+  // If the user is not logged in, show a message
   if (!user) return <div className="flex items-center justify-center h-screen"><h4>Log in to view this page.</h4></div>;
 
   return (
@@ -106,7 +142,7 @@ const PrivateUserProfile = () => {
             <div className="text-center">
               <div className="flex justify-center">
                 <Image
-                  src={user.profilePictureUrl || capturedImage} // Display either the URL from MongoDB or the captured image
+                  src={capturedImage || user.profilePictureUrl || 'https://example.com/default-avatar.png'} // Display either the uploaded, saved, or default image
                   className="w-48 h-48 object-cover rounded-full border-4 border-gray-400 mx-auto"
                   alt="Profile"
                 />
