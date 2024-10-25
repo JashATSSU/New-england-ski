@@ -11,11 +11,12 @@ const editUser = require('./routes/userEditUser');
 const deleteUser = require('./routes/userDeleteAll');
 const skiResortsRoute = require('./routes/skiResorts');
 const User = require('./models/userModel'); // Import User model for updating profile picture
+const uploadImagesRoute = require('./routes/upload-images');
 
 dotenv.config();
 
 const app = express();
-const SERVER_PORT = 8081;
+const SERVER_PORT = 8081; // Port for the server
 
 // Connect to MongoDB
 mongoose.connect(process.env.DB_URL, {
@@ -36,6 +37,7 @@ app.use('/user', getAllUsersRoute);
 app.use('/user', getUserByIdRoute);
 app.use('/user', editUser);
 app.use('/user', deleteUser);
+app.use('/api', uploadImagesRoute); // Route for image uploads
 
 // Ski resorts route
 app.use('/api/resortview', skiResortsRoute);
