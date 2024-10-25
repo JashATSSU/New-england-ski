@@ -111,7 +111,7 @@ const MapSearch = () => {
             <h2 className="font-bold text-xl mb-4">{selectedMap.split('.')[0]}</h2>
             <img
               id="map-image"
-              src={`/SkiMaps/${selectedMap}`} // Correct path to match the "SkiMaps" folder
+              src={`https://capstone-project-2024.s3.us-east-2.amazonaws.com/SkiMaps/${selectedMap}`} // Updated to S3 URL
               alt={selectedMap}
               className="max-w-full max-h-[400px] object-contain mb-4 border border-gray-300 shadow-md rounded"
             />
