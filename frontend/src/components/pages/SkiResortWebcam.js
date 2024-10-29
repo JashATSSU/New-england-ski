@@ -11,10 +11,6 @@ const resorts = [
     webcam: ['https://www.youtube.com/embed/xWdZHDUHjv8'] 
   },
   { 
-    name: 'Killington',
-    webcam: ['https://www.youtube.com/embed/QUHuNsX6IZw'] 
-  },
-  { 
     name: 'Loon Mountain', 
     webcam: [
       'https://www.youtube.com/embed/5NUYOuzzZwc', 

@@ -8,7 +8,6 @@ const skiMaps = [
   "Attitash.png",
   "Bolten Valley.png",
   "Bretton Woods.png",
-  "Burke Mountain.jpeg",
   "Cannon.png",
   "Jay Peak.png",
   "Killington.png",
