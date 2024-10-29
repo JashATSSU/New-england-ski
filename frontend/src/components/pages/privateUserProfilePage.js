@@ -8,6 +8,7 @@ const PrivateUserProfile = () => {
   const [show, setShow] = useState(false);
   const [user, setUser] = useState(null);
   const [capturedImage, setCapturedImage] = useState(null); // Local image state
+  const [profileImageUrl, setProfileImageUrl] = useState('https://example.com/default-avatar.png'); // Default image URL
   const [cameraStream, setCameraStream] = useState(null);
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
@@ -15,12 +16,18 @@ const PrivateUserProfile = () => {
 
   const handleClose = () => {
     setShow(false);
-    if (cameraStream) cameraStream.getTracks().forEach((track) => track.stop());
+    stopCamera(); // Stop the camera when closing the modal
   };
 
-  const handleShow = () => setShow(true);
+  const handleShow = () => {
+    startCamera(); // Start the camera when the modal opens
+    setShow(true);
+  };
 
   const handleLogout = async () => {
+    setUser(null);
+    setProfileImageUrl('https://example.com/default-avatar.png'); // Reset the image on logout
+    localStorage.removeItem('profilePictureUrl'); // Clear local storage
     navigate("/");
   };
 
@@ -31,14 +38,25 @@ const PrivateUserProfile = () => {
       setCameraStream(stream);
       if (videoRef.current) {
         videoRef.current.srcObject = stream;
-        videoRef.current.play();
+        videoRef.current.play().catch(error => console.error("Error playing video:", error));
       }
     } catch (error) {
       console.error("Error accessing the camera:", error);
     }
   };
 
-  // Capture photo from camera
+  // Stop the camera stream
+  const stopCamera = () => {
+    if (cameraStream) {
+      cameraStream.getTracks().forEach(track => track.stop());
+      setCameraStream(null);
+      if (videoRef.current) {
+        videoRef.current.srcObject = null;
+      }
+    }
+  };
+
+  // Capture photo from the video feed
   const capturePhoto = () => {
     if (canvasRef.current && videoRef.current) {
       const context = canvasRef.current.getContext("2d");
@@ -46,50 +64,27 @@ const PrivateUserProfile = () => {
       canvasRef.current.height = videoRef.current.videoHeight;
       context.drawImage(videoRef.current, 0, 0);
       const image = canvasRef.current.toDataURL("image/png");
-      setCapturedImage(image); // Update captured image in state
-      persistProfilePicture(image); // Force persistence of the image
+      setCapturedImage(image); // Set the captured image
     }
   };
 
-  // Function to upload the photo to the server
+  // Upload the captured photo to the server
   const uploadPhoto = async (image) => {
+    const userId = user.id; // Get the logged-in user ID
     try {
-      const userId = user.id; // Get the logged-in user ID
       const response = await axios.post('http://localhost:8081/api/upload-profile-picture', {
-        image: image, // Base64 image string
-        userId: userId // Pass the user ID
+        image,
+        userId,
       });
 
-      // Update the user's profile picture in state and persist it
+      // Update the user's profile picture in state and local storage
       const updatedUser = response.data.user;
-      setUser(updatedUser);
-      setCapturedImage(updatedUser.profilePictureUrl); // Display uploaded image
-      persistProfilePicture(updatedUser.profilePictureUrl); // Force persistence of the image
+      setProfileImageUrl(updatedUser.profilePictureUrl); // Set the new profile picture URL
+      localStorage.setItem('profilePictureUrl', updatedUser.profilePictureUrl); // Store in local storage
 
       console.log("Profile picture uploaded successfully:", updatedUser.profilePictureUrl);
     } catch (error) {
       console.error('Error uploading photo:', error.response ? error.response.data : error.message);
-    }
-  };
-
-  // Handle file upload (manual selection)
-  const handleFileUpload = async (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      const reader = new FileReader();
-      reader.onloadend = async () => {
-        const image = reader.result;
-        setCapturedImage(image); // Update captured image in state
-        persistProfilePicture(image); // Force persistence of the image
-      };
-      reader.readAsDataURL(file);
-    }
-  };
-
-  // Save the profile picture (either captured or uploaded)
-  const handleSaveProfilePicture = async () => {
-    if (capturedImage) {
-      await uploadPhoto(capturedImage); // Upload the image to the backend
     }
   };
 
@@ -99,40 +94,33 @@ const PrivateUserProfile = () => {
       const fetchedUser = getUserInfo(); // Assuming this function gets user info from JWT
       if (fetchedUser) {
         setUser(fetchedUser);
-
-        try {
-          const response = await axios.get(`http://localhost:8081/api/get-profile-picture/${fetchedUser.id}`);
-          const profilePicUrl = response.data.profilePictureUrl;
-
-          // Set profile picture from the backend or use previously stored one
-          setCapturedImage(profilePicUrl || localStorage.getItem('profilePicture'));
-          
-          // Persist it if it's a new one from the backend
-          if (profilePicUrl) {
-            persistProfilePicture(profilePicUrl);
-          }
-        } catch (error) {
-          console.error('Error fetching profile picture:', error);
-          // Fallback logic: use the previously saved picture (from localStorage)
-          const persistedPicture = localStorage.getItem('profilePicture');
-          if (persistedPicture) {
-            setCapturedImage(persistedPicture); // Use the persisted image if available
+        
+        // Fetch profile picture URL from local storage or API
+        const storedProfilePic = localStorage.getItem('profilePictureUrl');
+        if (storedProfilePic) {
+          setProfileImageUrl(storedProfilePic); // Use the profile picture from local storage
+        } else {
+          try {
+            const response = await axios.get(`http://localhost:8081/api/get-profile-picture/${fetchedUser.id}`);
+            const profilePicUrl = response.data.profilePictureUrl;
+            if (profilePicUrl) {
+              setProfileImageUrl(profilePicUrl); // Set the profile picture from the API
+              localStorage.setItem('profilePictureUrl', profilePicUrl); // Store in local storage
+            } else {
+              // If no profile picture is found, set the default
+              setProfileImageUrl('https://example.com/default-avatar.png');
+            }
+          } catch (error) {
+            console.error('Error fetching profile picture:', error);
+            // Set to default if there's an error
+            setProfileImageUrl('https://example.com/default-avatar.png');
           }
         }
-
-        console.log("Fetched user:", fetchedUser);
       }
     };
+
     fetchUser();
   }, []);
-
-  // Persist profile picture in localStorage to ensure it stays put
-  const persistProfilePicture = (image) => {
-    localStorage.setItem('profilePicture', image); // Store the image in localStorage
-  };
-
-  // If the user is not logged in, show a message
-  if (!user) return <div className="flex items-center justify-center h-screen"><h4>Log in to view this page.</h4></div>;
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-r from-gray-200 to-white p-4">
@@ -142,14 +130,14 @@ const PrivateUserProfile = () => {
             <div className="text-center">
               <div className="flex justify-center">
                 <Image
-                  src={capturedImage || user.profilePictureUrl || 'https://example.com/default-avatar.png'} // Display either the uploaded, saved, or default image
+                  src={profileImageUrl} // Display the profile picture
                   className="w-48 h-48 object-cover rounded-full border-4 border-gray-400 mx-auto"
                   alt="Profile"
                 />
               </div>
               <h1 className="text-4xl mt-4 font-semibold text-gray-800">Profile</h1>
-              <h2 className="text-2xl mt-2 font-semibold text-gray-800">{user.username}</h2>
-              <p className="text-lg text-gray-500">{user.email}</p>
+              <h2 className="text-2xl mt-2 font-semibold text-gray-800">{user?.username}</h2>
+              <p className="text-lg text-gray-500">{user?.email}</p>
 
               <div className="mt-4 flex justify-between">
                 <Button 
@@ -182,14 +170,19 @@ const PrivateUserProfile = () => {
             <Button onClick={startCamera} className="mt-3">Start Camera</Button>
             <Button onClick={capturePhoto} className="mt-3">Capture Photo</Button>
           </div>
-          <input type="file" accept="image/*" onChange={handleFileUpload} className="mt-3" />
           {capturedImage && <Image src={capturedImage} className="mt-3" />}
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={handleClose}>
             Close
           </Button>
-          <Button variant="primary" onClick={handleSaveProfilePicture}>
+          <Button variant="primary" onClick={() => {
+            if (capturedImage) {
+              uploadPhoto(capturedImage); // Upload the image to the backend
+              setCapturedImage(null); // Reset captured image after upload
+              handleClose(); // Close the modal after saving
+            }
+          }}>
             Save Changes
           </Button>
         </Modal.Footer>
