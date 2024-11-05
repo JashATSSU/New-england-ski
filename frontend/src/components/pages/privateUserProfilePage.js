@@ -7,8 +7,8 @@ import axios from "axios";
 const PrivateUserProfile = () => {
   const [show, setShow] = useState(false);
   const [user, setUser] = useState(null);
-  const [capturedImage, setCapturedImage] = useState(null); // Local image state
-  const [profileImageUrl, setProfileImageUrl] = useState('https://example.com/default-avatar.png'); // Default image URL
+  const [capturedImage, setCapturedImage] = useState(null);
+  const [profileImageUrl, setProfileImageUrl] = useState('https://example.com/default-avatar.png');
   const [cameraStream, setCameraStream] = useState(null);
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
@@ -16,22 +16,21 @@ const PrivateUserProfile = () => {
 
   const handleClose = () => {
     setShow(false);
-    stopCamera(); // Stop the camera when closing the modal
+    stopCamera();
   };
 
   const handleShow = () => {
-    startCamera(); // Start the camera when the modal opens
+    startCamera();
     setShow(true);
   };
 
   const handleLogout = async () => {
     setUser(null);
-    setProfileImageUrl('https://example.com/default-avatar.png'); // Reset the image on logout
-    localStorage.removeItem('profilePictureUrl'); // Clear local storage
+    setProfileImageUrl('https://example.com/default-avatar.png');
+    localStorage.removeItem('profilePictureUrl');
     navigate("/");
   };
 
-  // Start the camera stream
   const startCamera = async () => {
     try {
       const stream = await navigator.mediaDevices.getUserMedia({ video: true });
@@ -45,7 +44,6 @@ const PrivateUserProfile = () => {
     }
   };
 
-  // Stop the camera stream
   const stopCamera = () => {
     if (cameraStream) {
       cameraStream.getTracks().forEach(track => track.stop());
@@ -56,7 +54,6 @@ const PrivateUserProfile = () => {
     }
   };
 
-  // Capture photo from the video feed
   const capturePhoto = () => {
     if (canvasRef.current && videoRef.current) {
       const context = canvasRef.current.getContext("2d");
@@ -64,63 +61,59 @@ const PrivateUserProfile = () => {
       canvasRef.current.height = videoRef.current.videoHeight;
       context.drawImage(videoRef.current, 0, 0);
       const image = canvasRef.current.toDataURL("image/png");
-      setCapturedImage(image); // Set the captured image
+      setCapturedImage(image);
     }
   };
 
-  // Upload the captured photo to the server
   const uploadPhoto = async (image) => {
-    const userId = user.id; // Get the logged-in user ID
+    const userId = user.id;
     try {
       const response = await axios.post('http://localhost:8081/api/upload-profile-picture', {
         image,
         userId,
       });
-
-      // Update the user's profile picture in state and local storage
       const updatedUser = response.data.user;
-      setProfileImageUrl(updatedUser.profilePictureUrl); // Set the new profile picture URL
-      localStorage.setItem('profilePictureUrl', updatedUser.profilePictureUrl); // Store in local storage
-
+      setProfileImageUrl(updatedUser.profilePictureUrl);
+      localStorage.setItem('profilePictureUrl', updatedUser.profilePictureUrl);
       console.log("Profile picture uploaded successfully:", updatedUser.profilePictureUrl);
     } catch (error) {
       console.error('Error uploading photo:', error.response ? error.response.data : error.message);
     }
   };
 
-  // Fetch the user information and profile picture from the backend
   useEffect(() => {
     const fetchUser = async () => {
-      const fetchedUser = getUserInfo(); // Assuming this function gets user info from JWT
+      const fetchedUser = getUserInfo();
       if (fetchedUser) {
         setUser(fetchedUser);
-        
-        // Fetch profile picture URL from local storage or API
         const storedProfilePic = localStorage.getItem('profilePictureUrl');
         if (storedProfilePic) {
-          setProfileImageUrl(storedProfilePic); // Use the profile picture from local storage
+          setProfileImageUrl(storedProfilePic);
         } else {
           try {
             const response = await axios.get(`http://localhost:8081/api/get-profile-picture/${fetchedUser.id}`);
             const profilePicUrl = response.data.profilePictureUrl;
             if (profilePicUrl) {
-              setProfileImageUrl(profilePicUrl); // Set the profile picture from the API
-              localStorage.setItem('profilePictureUrl', profilePicUrl); // Store in local storage
+              setProfileImageUrl(profilePicUrl);
+              localStorage.setItem('profilePictureUrl', profilePicUrl);
             } else {
-              // If no profile picture is found, set the default
               setProfileImageUrl('https://example.com/default-avatar.png');
             }
           } catch (error) {
             console.error('Error fetching profile picture:', error);
-            // Set to default if there's an error
             setProfileImageUrl('https://example.com/default-avatar.png');
           }
         }
       }
     };
-
     fetchUser();
   }, []);
+
+  if (!user) return (
+    <div style={styles.container}>
+      <h4 style={styles.message}>Log in to view this page.</h4>
+    </div>
+  );
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-r from-gray-200 to-white p-4">
@@ -130,7 +123,7 @@ const PrivateUserProfile = () => {
             <div className="text-center">
               <div className="flex justify-center">
                 <Image
-                  src={profileImageUrl} // Display the profile picture
+                  src={profileImageUrl}
                   className="w-48 h-48 object-cover rounded-full border-4 border-gray-400 mx-auto"
                   alt="Profile"
                 />
@@ -158,7 +151,6 @@ const PrivateUserProfile = () => {
         </Card>
       </div>
 
-      {/* Upload Profile Picture Modal */}
       <Modal show={show} onHide={handleClose}>
         <Modal.Header closeButton>
           <Modal.Title>Upload Profile Picture</Modal.Title>
@@ -178,9 +170,9 @@ const PrivateUserProfile = () => {
           </Button>
           <Button variant="primary" onClick={() => {
             if (capturedImage) {
-              uploadPhoto(capturedImage); // Upload the image to the backend
-              setCapturedImage(null); // Reset captured image after upload
-              handleClose(); // Close the modal after saving
+              uploadPhoto(capturedImage);
+              setCapturedImage(null);
+              handleClose();
             }
           }}>
             Save Changes
@@ -189,6 +181,20 @@ const PrivateUserProfile = () => {
       </Modal>
     </div>
   );
+};
+
+const styles = {
+  container: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: '100vh',
+    textAlign: 'center',
+  },
+  message: {
+    color: '#333',
+    fontSize: '1.5rem',
+  },
 };
 
 export default PrivateUserProfile;

@@ -1,70 +1,37 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { getUserInfo } from '../../utilities/decodeJwt';
 
 const resorts = [
-  { 
-    name: 'Attitash Mountain', 
-    webcam: ['https://www.youtube.com/embed/B32BbIXgHWw'] 
-  },
-  { 
-    name: 'Bolton Valley', 
-    webcam: ['https://www.youtube.com/embed/xWdZHDUHjv8'] 
-  },
-  { 
-    name: 'Loon Mountain', 
-    webcam: [
-      'https://www.youtube.com/embed/5NUYOuzzZwc', 
-      'https://www.youtube.com/embed/1ulgeNTlFJc'
-    ] 
-  },
-  { 
-    name: 'Mad River Glen', 
-    webcam: ['https://www.youtube.com/embed/zMuhC48767w'] 
-  },
-  { 
-    name: 'Mount Katahdin', 
-    webcam: ['https://www.youtube.com/embed/yPyOLnDcrHA'] 
-  },
-  { 
-    name: 'Mount Washington', 
-    webcam: ['https://www.youtube.com/embed/5qVHjf7hKZU'] 
-  },
-  { 
-    name: 'Pats Peak', 
-    webcam: [
-      'https://www.youtube.com/embed/ZLsh8WsISr0',
-      'https://www.youtube.com/embed/KFjl8wPJvyg'
-    ] 
-  },  
-  { 
-    name: 'Stowe', 
-    webcam: ['https://www.youtube.com/embed/AhcH03HwuH0'] 
-  },
-  { 
-    name: 'Stratton Mountain', 
-    webcam: [
-      'https://www.youtube.com/embed/AhcH03HwuH0',
-      'https://www.youtube.com/embed/VPQaZffyviI'
-    ] 
-  },
-  { 
-    name: 'Sugarbush', 
-    webcam: ['https://www.youtube.com/embed/tdQOYaEQC3o'] 
-  },
-  { 
-    name: 'Sugarloaf', 
-    webcam: ['https://www.youtube.com/embed/K77ahIkmPGw']
-  },
-  { 
-    name: 'Sunday River', 
-    webcam: ['https://www.youtube.com/embed/J98tW5YX4Z8'] 
-  }
+  { name: 'Attitash Mountain', webcam: ['https://www.youtube.com/embed/B32BbIXgHWw'] },
+  { name: 'Bolton Valley', webcam: ['https://www.youtube.com/embed/xWdZHDUHjv8'] },
+  { name: 'Loon Mountain', webcam: ['https://www.youtube.com/embed/5NUYOuzzZwc', 'https://www.youtube.com/embed/1ulgeNTlFJc'] },
+  { name: 'Mad River Glen', webcam: ['https://www.youtube.com/embed/zMuhC48767w'] },
+  { name: 'Mount Katahdin', webcam: ['https://www.youtube.com/embed/yPyOLnDcrHA'] },
+  { name: 'Mount Washington', webcam: ['https://www.youtube.com/embed/5qVHjf7hKZU'] },
+  { name: 'Pats Peak', webcam: ['https://www.youtube.com/embed/ZLsh8WsISr0', 'https://www.youtube.com/embed/KFjl8wPJvyg'] },
+  { name: 'Stowe', webcam: ['https://www.youtube.com/embed/AhcH03HwuH0'] },
+  { name: 'Stratton Mountain', webcam: ['https://www.youtube.com/embed/AhcH03HwuH0', 'https://www.youtube.com/embed/VPQaZffyviI'] },
+  { name: 'Sugarbush', webcam: ['https://www.youtube.com/embed/tdQOYaEQC3o'] },
+  { name: 'Sugarloaf', webcam: ['https://www.youtube.com/embed/K77ahIkmPGw'] },
+  { name: 'Sunday River', webcam: ['https://www.youtube.com/embed/J98tW5YX4Z8'] }
 ];
 
-
 const SkiResortWebcam = () => {
+  const [user, setUser] = useState(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedResort, setSelectedResort] = useState(null);
+
+  useEffect(() => {
+    const loggedUser = getUserInfo();
+    setUser(loggedUser);
+  }, []);
+
+  if (!user) return (
+    <div style={styles.container}>
+        <h4 style={styles.message}>Log in to view this page.</h4>
+    </div>
+  );
 
   const handleSearchChange = (e) => {
     setSearchQuery(e.target.value);
@@ -126,11 +93,25 @@ const SkiResortWebcam = () => {
             </div>
           </div>
         ) : (
-          <p className="text-center text-gray-600"></p>
+          <p className="text-center text-gray-600">Select a resort to view its webcam feed.</p>
         )}
       </div>
     </div>
   );
+};
+
+const styles = {
+  container: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    height: '100vh',
+    textAlign: 'center',
+  },
+  message: {
+    color: '#333',
+    fontSize: '1.5rem',
+  },
 };
 
 export default SkiResortWebcam;

@@ -22,9 +22,9 @@ export default function Navbar() {
           {!isAuthenticated && <Nav.Link href="/">Start</Nav.Link>}
           <Nav.Link href="/home">Home</Nav.Link>
           <Nav.Link href="/privateUserProfile">Profile</Nav.Link>
-          <Nav.Link href="/searchSkiResorts">Search Ski Resorts</Nav.Link>
-          <Nav.Link href="/MapSearch">Search Trail Map</Nav.Link> 
-          <Nav.Link href="/SkiResortWebcam">Search Resort Webcam</Nav.Link>
+          <Nav.Link href="/searchSkiResorts">Ski Resorts</Nav.Link>
+          <Nav.Link href="/MapSearch">Trail Maps</Nav.Link> 
+          <Nav.Link href="/SkiResortWebcam">Resort Webcams</Nav.Link>
         </Nav>
       </Container>
     </ReactNavbar>
