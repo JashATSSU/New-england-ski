@@ -132,20 +132,14 @@ const PrivateUserProfile = () => {
               <h2 className="text-2xl mt-2 font-semibold text-gray-800">{user?.username}</h2>
               <p className="text-lg text-gray-500">{user?.email}</p>
 
-              <div className="mt-4 flex justify-between">
-                <Button 
-                  className="w-1/2 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded" 
-                  onClick={handleShow}
-                >
-                  Upload Profile Picture
-                </Button>
-                <Button 
-                  className="w-1/2 bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded" 
-                  onClick={handleLogout}
-                >
-                  Logout
-                </Button>
-              </div>
+              <div className="flex justify-center items-center">
+              <Button 
+                className="w-1/2 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded" 
+                onClick={handleShow}
+              >
+                Upload Profile Picture
+              </Button>
+            </div>
             </div>
           </Card.Body>
         </Card>
