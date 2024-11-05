@@ -1,4 +1,3 @@
-// src/components/navbar.js
 import React, { useEffect, useState } from "react";
 import { getUserInfo } from '../utilities/decodeJwt';
 import Container from 'react-bootstrap/Container';
@@ -18,8 +17,15 @@ export default function Navbar() {
   return (
     <ReactNavbar bg="dark" variant="dark">
       <Container>
-        {/* Use the NavBar brand as a primary navigation link */}
-        <ReactNavbar.Brand href="/">New England Mountain Minder</ReactNavbar.Brand>
+        {/* Brand Name Styling */}
+        <ReactNavbar.Brand 
+          href="/" 
+          style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#FFD700' }} // Gold color
+        >
+          New England Mountain Minder
+        </ReactNavbar.Brand>
+        {/* Divider */}
+        <div style={{ borderLeft: '2px solid #FFD700', height: '30px', margin: '0 15px' }} />
         <Nav className="me-auto">
           <Nav.Link href="/home">Homepage</Nav.Link>
           <Nav.Link href="/privateUserProfile">Profile</Nav.Link>
