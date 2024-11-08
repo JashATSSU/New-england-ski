@@ -25,6 +25,7 @@ const MapSearch = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedMap, setSelectedMap] = useState(null);
   const [user, setUser] = useState(null);
+  const [error, setError] = useState(null);  // Error state for PDF generation
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -52,12 +53,16 @@ const MapSearch = () => {
     if (!selectedMap) return; // Ensure there's a selected map
 
     const imgElement = document.getElementById('map-image');
-    if (!imgElement.complete) {
+    
+    if (imgElement.complete) {
+      createPDF(imgElement);
+    } else {
       imgElement.onload = () => {
         createPDF(imgElement);
       };
-    } else {
-      createPDF(imgElement);
+      imgElement.onerror = () => {
+        setError("Failed to load the map image. Please try again later.");
+      };
     }
   };
 
@@ -67,10 +72,16 @@ const MapSearch = () => {
     canvas.width = imgElement.width;
     canvas.height = imgElement.height;
     context.drawImage(imgElement, 0, 0, canvas.width, canvas.height);
-    const imgData = canvas.toDataURL('image/png');
-    const doc = new jsPDF();
-    doc.addImage(imgData, 'PNG', 10, 10);
-    doc.save(`${selectedMap.split('.')[0]}.pdf`);
+
+    try {
+      const imgData = canvas.toDataURL('image/png');
+      const doc = new jsPDF();
+      doc.addImage(imgData, 'PNG', 10, 10);
+      doc.save(`${selectedMap.split('.')[0]}.pdf`);
+    } catch (error) {
+      console.error("Error generating PDF:", error);
+      setError("There was an error generating the PDF. Please try again.");
+    }
   };
 
   // Filter maps based on the search term
@@ -113,6 +124,7 @@ const MapSearch = () => {
               src={`https://capstone-project-2024.s3.us-east-2.amazonaws.com/SkiMaps/${selectedMap}`} // Updated to S3 URL
               alt={selectedMap}
               className="max-w-full max-h-[400px] object-contain mb-4 border border-gray-300 shadow-md rounded"
+              crossOrigin="anonymous" // Important for CORS to avoid canvas tainting
             />
             <button
               onClick={handlePrint}
@@ -120,6 +132,9 @@ const MapSearch = () => {
             >
               Have a map on us! (Print PDF)
             </button>
+            {error && (
+              <p className="text-red-500 mt-4">{error}</p>
+            )}
           </div>
         )}
       </div>
