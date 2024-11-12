@@ -27,7 +27,7 @@ export default function Navbar() {
         {/* Divider */}
         <div style={{ borderLeft: '2px solid #FFD700', height: '30px', margin: '0 15px' }} />
         <Nav className="me-auto">
-          <Nav.Link href="/home">Homepage</Nav.Link>
+          <Nav.Link href="/home">Home</Nav.Link>
           <Nav.Link href="/privateUserProfile">Profile</Nav.Link>
           <Nav.Link href="/searchSkiResorts">Ski Resorts</Nav.Link>
           <Nav.Link href="/MapSearch">Trail Maps</Nav.Link> 
