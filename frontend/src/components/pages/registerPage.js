@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Button from "react-bootstrap/Button";
@@ -10,23 +10,10 @@ const Register = () => {
   const [data, setData] = useState({ username: "", email: "", password: "" });
   const [error, setError] = useState("");
   const navigate = useNavigate();
-  const [light, setLight] = useState(false);
-  const [bgColor, setBgColor] = useState("bg-gray-800");
-  const [bgText, setBgText] = useState("Light Mode");
 
   const handleChange = ({ currentTarget: input }) => {
     setData({ ...data, [input.name]: input.value });
   };
-
-  useEffect(() => {
-    if (light) {
-      setBgColor("bg-white");
-      setBgText("Dark Mode");
-    } else {
-      setBgColor("bg-gray-800");
-      setBgText("Light Mode");
-    }
-  }, [light]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -47,7 +34,7 @@ const Register = () => {
   };
 
   return (
-    <section className={`h-screen flex items-center justify-center ${bgColor}`}>
+    <section className="h-screen flex items-center justify-center bg-gray-800">
       <div className="w-full max-w-md">
         <div className="bg-white rounded-lg shadow-lg p-8">
           <h2 className="text-2xl font-bold text-center mb-6">Register</h2>
@@ -88,20 +75,7 @@ const Register = () => {
               />
             </Form.Group>
 
-            <div className="flex items-center mb-4">
-              <input
-                type="checkbox"
-                className="form-checkbox h-5 w-5 text-blue-600"
-                onChange={() => {
-                  setLight(!light);
-                }}
-              />
-              <label className="ml-2 text-gray-700">{bgText}</label>
-            </div>
-
-            {error && (
-              <div className="text-red-500 mb-4">{error}</div>
-            )}
+            {error && <div className="text-red-500 mb-4">{error}</div>}
             <Button
               variant="primary"
               type="submit"

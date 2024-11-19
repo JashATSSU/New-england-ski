@@ -5,16 +5,12 @@ import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import { getUserInfo } from '../../utilities/decodeJwt';
 
-
 const url = `${process.env.REACT_APP_BACKEND_SERVER_URI}/user/login`;
 
 const Login = () => {
   const [user, setUser] = useState(null);
   const [data, setData] = useState({ username: "", password: "" });
   const [error, setError] = useState("");
-  const [light, setLight] = useState(false);
-  const [bgColor, setBgColor] = useState("bg-gray-800");
-  const [bgText, setBgText] = useState("Light Mode");
   const navigate = useNavigate();
 
   const handleChange = ({ currentTarget: input }) => {
@@ -24,15 +20,7 @@ const Login = () => {
   useEffect(() => {
     const obj = getUserInfo(user);
     setUser(obj);
-
-    if (light) {
-      setBgColor("bg-white");
-      setBgText("Dark Mode");
-    } else {
-      setBgColor("bg-gray-800");
-      setBgText("Light Mode");
-    }
-  }, [light]);
+  }, [user]);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -59,7 +47,7 @@ const Login = () => {
   }
 
   return (
-    <section className={`h-screen flex items-center justify-center ${bgColor}`}>
+    <section className="h-screen flex items-center justify-center bg-gray-800">
       <div className="w-full max-w-md">
         <div className="bg-white rounded-lg shadow-lg p-8">
           <h2 className="text-2xl font-bold text-center mb-6">Log In</h2>
@@ -74,7 +62,6 @@ const Login = () => {
                 className="border rounded-md p-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
                 required
               />
-            
             </Form.Group>
 
             <Form.Group className="mb-4">
@@ -97,17 +84,6 @@ const Login = () => {
                 </Link>
               </Form.Text>
             </Form.Group>
-
-            <div className="flex items-center mb-4">
-              <input
-                type="checkbox"
-                className="form-checkbox h-5 w-5 text-blue-600"
-                onChange={() => {
-                  setLight(!light);
-                }}
-              />
-              <label className="ml-2 text-gray-700">{bgText}</label>
-            </div>
 
             {error && <div className="text-red-500 mb-4">{error}</div>}
             <Button
