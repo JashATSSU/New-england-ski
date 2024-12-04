@@ -1,89 +1,80 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { getUserInfo } from '../../utilities/decodeJwt';
 
 const SkiResortWebcam = () => {
-  const [user, setUser] = useState(null);
-  const [resorts, setResorts] = useState([]);
-  const [searchQuery, setSearchQuery] = useState('');
   const [selectedResort, setSelectedResort] = useState(null);
+  const [searchQuery, setSearchQuery] = useState(''); // state for search query
+  const [resorts, setResorts] = useState([]);
 
+  // Fetch resorts data from the backend API
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const loggedUser = getUserInfo();
-        setUser(loggedUser);
-
-        const response = await axios.get('/resort/getAll');
-        setResorts(response.data);
-      } catch (error) {
-        console.error('Error fetching resorts:', error);
-      }
-    };
-
-    fetchData();
+    fetch('http://localhost:8081/api/resorts') // Adjust the URL to match your server setup
+      .then(response => response.json())
+      .then(data => setResorts(data))
+      .catch(error => console.error('Error fetching resorts:', error));
   }, []);
 
-  if (!user) {
-    return (
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-        <h4>Log in to view this page.</h4>
-      </div>
-    );
-  }
+  // Handle resort selection
+  const handleSelectResort = (resortId) => {
+    const resort = resorts.find((r) => r.id === resortId);
+    setSelectedResort(resort);
+  };
 
+  // Filter resorts based on the search query
   const filteredResorts = resorts.filter((resort) =>
     resort.name.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
-    <div className="flex min-h-screen bg-gray-100">
-      {/* Sidebar */}
-      <div className="w-64 p-4 bg-white shadow-lg overflow-y-auto max-h-screen">
-        <h2 className="text-xl font-bold mb-4">Ski Resorts</h2>
-        <input
-          type="text"
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          placeholder="Search resorts"
-          className="w-full p-2 border border-gray-300 rounded-lg mb-4"
-        />
-        <ul>
-          {filteredResorts.map((resort) => (
-            <li
-              key={resort.id}
-              className="cursor-pointer p-2 hover:bg-gray-200"
-              onClick={() => setSelectedResort(resort)}
-            >
-              {resort.name}
-            </li>
-          ))}
-        </ul>
-      </div>
+    <div className="container">
+      <div className="row">
+        {/* Sidebar */}
+        <div className="col-3">
+          <h3>Ski Resorts</h3>
+          <input
+            type="text"
+            className="form-control"
+            placeholder="Search resorts..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+          />
+          <ul className="list-group mt-3">
+            {filteredResorts.map((resort) => (
+              <li
+                key={resort.id}
+                className="list-group-item cursor-pointer" // Add the 'cursor-pointer' class here
+                onClick={() => handleSelectResort(resort.id)}
+              >
+                {resort.name}
+              </li>
+            ))}
+          </ul>
+        </div>
 
-      {/* Main Content */}
-      <div className="flex-1 p-8">
-        <h1 className="text-3xl mb-6">Webcam Feed</h1>
-        {selectedResort ? (
-          <div className="text-center">
-            <h2 className="text-2xl mb-4">{selectedResort.name} Webcams</h2>
-            <div className="flex flex-wrap justify-center gap-4">
-              {selectedResort.webcam.map((url, index) => (
-                <iframe
-                  key={index}
-                  src={url}
-                  title={`Webcam ${index + 1}`}
-                  width="600"
-                  height="400"
-                  className="border-2 rounded-lg"
-                />
-              ))}
+        {/* Main content */}
+        <div className="col-9">
+          <h3>Webcam Feed</h3>
+          {selectedResort ? (
+            <div>
+              <h4>{selectedResort.name} Webcams</h4>
+              <div>
+                {selectedResort.webcam.map((url, index) => (
+                  <iframe
+                    key={index}
+                    src={url}
+                    width="600"
+                    height="400"
+                    frameBorder="0"
+                    allowFullScreen
+                    title={`Webcam ${index + 1}`}
+                  ></iframe>
+                ))}
+              </div>
             </div>
-          </div>
-        ) : (
-          <p className="text-center">Select a resort to view its webcam feed.</p>
-        )}
+          ) : (
+            <p>Select a resort to view its webcam feed.</p>
+          )}
+        </div>
       </div>
     </div>
   );
