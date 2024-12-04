@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from "react";
-import { Button, Modal, Card, Image } from "react-bootstrap";
+import { Button, Modal, Card, Image, Form } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
 import { getUserInfo } from '../../utilities/decodeJwt';
 import axios from "axios";
@@ -10,6 +10,11 @@ const PrivateUserProfile = () => {
   const [capturedImage, setCapturedImage] = useState(null);
   const [profileImageUrl, setProfileImageUrl] = useState('https://example.com/default-avatar.png');
   const [cameraStream, setCameraStream] = useState(null);
+  const [bio, setBio] = useState('');
+  const [isBioEditing, setIsBioEditing] = useState(false);
+  const [preferences, setPreferences] = useState('snowboarder'); // 'snowboarder' or 'skier'
+  const [location, setLocation] = useState('mountain'); // 'mountain' or 'lodge'
+  const [isEditingPreferences, setIsEditingPreferences] = useState(false); // To control the edit state of preferences
   const videoRef = useRef(null);
   const canvasRef = useRef(null);
   const navigate = useNavigate();
@@ -81,6 +86,28 @@ const PrivateUserProfile = () => {
     }
   };
 
+  const handleBioSave = () => {
+    if (bio.length <= 255) {
+      setIsBioEditing(false);
+      // Here you can add a request to save the bio to your backend if needed
+    } else {
+      alert('Bio must be 255 characters or less');
+    }
+  };
+
+  const handleBioDelete = () => {
+    setBio('');
+    setIsBioEditing(false);
+  };
+
+  const handlePreferencesSave = () => {
+    setIsEditingPreferences(false); // Stop editing preferences when the user saves
+  };
+
+  const handlePreferencesCancel = () => {
+    setIsEditingPreferences(false); // Stop editing preferences when the user cancels
+  };
+
   useEffect(() => {
     const fetchUser = async () => {
       const fetchedUser = getUserInfo();
@@ -116,9 +143,9 @@ const PrivateUserProfile = () => {
   );
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gradient-to-r from-gray-200 to-white p-4">
-      <div className="w-full h-full flex items-center justify-center">
-        <Card className="w-full max-w-2xl p-8 rounded-lg shadow-lg transition-transform transform hover:scale-105">
+    <div className="w-full min-h-screen flex items-center justify-center bg-gradient-to-r from-gray-200 to-white p-4">
+      <div className="w-full max-w-4xl p-8">
+        <Card className="w-full p-8 rounded-lg shadow-lg transition-transform transform hover:scale-105">
           <Card.Body>
             <div className="text-center">
               <div className="flex justify-center">
@@ -132,14 +159,82 @@ const PrivateUserProfile = () => {
               <h2 className="text-2xl mt-2 font-semibold text-gray-800">{user?.username}</h2>
               <p className="text-lg text-gray-500">{user?.email}</p>
 
-              <div className="flex justify-center items-center">
-              <Button 
-                className="w-1/2 bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded" 
+              <div className="my-4">
+                <label htmlFor="preferences" className="block text-xl font-semibold text-gray-700">Preferences</label>
+                <div className="mt-2">
+                  {isEditingPreferences ? (
+                    <div>
+                      <Form.Group>
+                        <Form.Label>Choose your activity:</Form.Label>
+                        <Form.Control
+                          as="select"
+                          value={preferences}
+                          onChange={(e) => setPreferences(e.target.value)}
+                        >
+                          <option value="snowboarder">Snowboarder</option>
+                          <option value="skier">Skier</option>
+                        </Form.Control>
+                      </Form.Group>
+                      <Form.Group>
+                        <Form.Label>Where do you prefer to be?</Form.Label>
+                        <Form.Control
+                          as="select"
+                          value={location}
+                          onChange={(e) => setLocation(e.target.value)}
+                        >
+                          <option value="mountain">On the Mountain</option>
+                          <option value="lodge">At the Lodge</option>
+                        </Form.Control>
+                      </Form.Group>
+                      <div className="mt-3">
+                        <Button onClick={handlePreferencesSave}>Save</Button>
+                        <Button variant="secondary" onClick={handlePreferencesCancel} className="ml-3">
+                          Cancel
+                        </Button>
+                      </div>
+                    </div>
+                  ) : (
+                    <div>
+                      <p className="text-lg text-gray-500">
+                        Activity: {preferences === 'snowboarder' ? 'Snowboard' : 'Ski'}
+                      </p>
+                      <p className="text-lg text-gray-500">
+                        Location: {location === 'mountain' ? 'On the Mountain' : 'At the Lodge'}
+                      </p>
+                      <Button onClick={() => setIsEditingPreferences(true)} className="mt-3">Edit Preferences</Button>
+                    </div>
+                  )}
+                </div>
+              </div>
+
+              <div className="my-4">
+                {isBioEditing ? (
+                  <>
+                    <Form.Control
+                      as="textarea"
+                      value={bio}
+                      onChange={(e) => setBio(e.target.value)}
+                      placeholder="Enter your bio"
+                      maxLength={255}
+                      className="mt-2"
+                    />
+                    <Button onClick={handleBioSave} className="mt-3">Save Bio</Button>
+                    <Button variant="danger" onClick={handleBioDelete} className="mt-3 ml-3">Delete Bio</Button>
+                  </>
+                ) : (
+                  <>
+                    <p className="text-lg text-gray-500">{bio || 'No bio yet.'}</p>
+                    <Button onClick={() => setIsBioEditing(true)} className="mt-3">Edit Bio</Button>
+                  </>
+                )}
+              </div>
+
+              <Button
+                className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded"
                 onClick={handleShow}
               >
                 Upload Profile Picture
               </Button>
-            </div>
             </div>
           </Card.Body>
         </Card>
