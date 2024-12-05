@@ -73,7 +73,7 @@ const PrivateUserProfile = () => {
   const uploadPhoto = async (image) => {
     const userId = user.id;
     try {
-      const response = await axios.post('http://localhost:8081/api/upload-profile-picture', {
+      const response = await axios.post(`${process.env.REACT_APP_BACKEND_SERVER_URI}/api/upload-profile-picture`, {
         image,
         userId,
       });

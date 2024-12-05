@@ -44,7 +44,7 @@ const SearchSkiResorts = () => {
 
     try {
       const response = await axios.get(
-        `http://localhost:8081/api/resortview/${searchQuery}`,
+        `${process.env.REACT_APP_BACKEND_SERVER_URI}/api/resortview/${searchQuery}`,
         {
           headers: {
             'X-RapidAPI-Key': process.env.REACT_APP_RAPIDAPI_KEY,

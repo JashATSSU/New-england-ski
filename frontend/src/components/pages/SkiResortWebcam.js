@@ -5,10 +5,9 @@ const SkiResortWebcam = () => {
   const [selectedResort, setSelectedResort] = useState(null);
   const [searchQuery, setSearchQuery] = useState(''); // state for search query
   const [resorts, setResorts] = useState([]);
-
   // Fetch resorts data from the backend API
   useEffect(() => {
-    fetch('http://localhost:8081/api/resorts') // Adjust the URL to match your server setup
+    fetch(`${process.env.REACT_APP_BACKEND_SERVER_URI}/api/resorts`) // Adjust the URL to match your server setup
       .then(response => response.json())
       .then(data => setResorts(data))
       .catch(error => console.error('Error fetching resorts:', error));
