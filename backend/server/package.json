@@ -4,8 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "node server.js", 
-    "server": "nodemon server.js"
+    "start": "node --max-old-space-size=1024 server.js",
+    "server": "nodemon --exec 'node --max-old-space-size=1024' server.js"
+    
   },
   "repository": {
     "type": "git",
