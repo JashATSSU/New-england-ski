@@ -32,14 +32,7 @@ const MapSearch = () => {
     setUser(getUserInfo());
   }, []);
 
-  // Render a message if the user is not logged in
-  if (!user) {
-    return (
-      <div style={styles.container}>
-        <h4 style={styles.message}>Log in to view this page.</h4>
-      </div>
-    );
-  }
+  
 
   const handleSearch = (e) => {
     setSearchTerm(e.target.value);
