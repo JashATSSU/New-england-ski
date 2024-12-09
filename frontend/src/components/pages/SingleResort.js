@@ -40,7 +40,7 @@ const SingleResort = ({ resort }) => {
   if (!resortDetails) return <p className="text-center">No details available</p>;
 
   // Safe access for lifts and forecasts
-  const { lifts } = resortDetails.data;
+  const { lifts, location, country, region, href, units } = resortDetails.data;
   const selectedResort = resortsList.find((r) => r.name === resort.name);
 
   return (
@@ -50,6 +50,16 @@ const SingleResort = ({ resort }) => {
         <p className="text-lg text-center">{selectedResort?.description || 'No description available.'}</p>
         <p className="text-center italic">{selectedResort?.motto || 'No motto available.'}</p>
         
+        {/* Resort Info Section */}
+        <div className="my-4 p-2 border-2 border-purple-500 rounded-lg bg-purple-50">
+          <h4 className="text-xl font-semibold">Resort Info</h4>
+          <p><strong>Country:</strong> {country}</p>
+          <p><strong>Region:</strong> {region}</p>
+          <a href={href} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline hover:text-blue-800">
+            View Mountain Report
+          </a>
+        </div>
+
         {/* Lift Status Section */}
         <div className="my-4 p-2 border-2 border-blue-500 rounded-lg bg-blue-50">
           <h4 className="text-xl font-semibold">Lift Status</h4>
@@ -58,6 +68,11 @@ const SingleResort = ({ resort }) => {
               ? `Open: ${lifts.stats.open}, Closed: ${lifts.stats.closed}`
               : 'No lift status available'}
           </p>
+          <div className="my-2">
+            {Object.entries(lifts?.status || {}).map(([lift, status], index) => (
+              <p key={index}><strong>{lift}:</strong> {status}</p>
+            ))}
+          </div>
         </div>
 
         {/* 5 Day Forecast Section */}
