@@ -56,7 +56,7 @@ const SingleResort = ({ resort }) => {
           <p><strong>Country:</strong> {country}</p>
           <p><strong>Region:</strong> {region}</p>
           <a href={href} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline hover:text-blue-800">
-           resorts website
+           resorts mountain report 
           </a>
         </div>
 
