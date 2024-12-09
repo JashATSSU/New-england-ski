@@ -31,6 +31,7 @@ app.use(cors({
   origin: 'https://new-england-mountainminder.onrender.com', // Allow requests from this specific origin
   methods: ['GET', 'POST', 'PUT', 'DELETE'], // Specify allowed HTTP methods
   credentials: true, // If you need cookies/auth headers
+  allowedHeaders: 'Content-Type, Authorization', // Allowing headers for authorization if needed
 }));
 app.use(express.json({ limit: '10mb' })); // Increase limit for larger images
 
