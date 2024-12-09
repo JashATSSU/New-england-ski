@@ -84,7 +84,7 @@ export const resortsList = [
     motto: 'Wild and wonderful.',
   },
   {
-    slug: 'cannon',
+    slug: "cannon",
     name: 'Cannon',
     description: 'Known for its challenging runs and rugged terrain.',
     motto: 'Ski the legend.',

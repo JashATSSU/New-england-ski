@@ -56,7 +56,7 @@ const SingleResort = ({ resort }) => {
           <p><strong>Country:</strong> {country}</p>
           <p><strong>Region:</strong> {region}</p>
           <a href={href} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline hover:text-blue-800">
-            View Mountain Report
+           resorts website
           </a>
         </div>
 
@@ -103,21 +103,7 @@ const SingleResort = ({ resort }) => {
           </div>
         </div>
 
-        {/* Hourly Forecast Section */}
-        <div className="my-4 p-2 border-2 border-yellow-500 rounded-lg bg-yellow-50">
-          <h4 className="text-xl font-semibold">Hourly Forecast</h4>
-          {hourlyForecast?.forecast ? (
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
-              {hourlyForecast.forecast.map((hour, index) => (
-                <div key={index} className="bg-white p-2 rounded-lg shadow-md">
-                  <p><strong>{hour.time || 'N/A'}:</strong> {hour.summary || 'N/A'} | Temp: {hour.maxTemp || 'N/A'} | Wind: {hour.windSpeed || 'N/A'} {hour.windDirection || 'N/A'}</p>
-                </div>
-              ))}
-            </div>
-          ) : (
-            <p>No hourly forecast data available</p>
-          )}
-        </div>
+        
 
         <div className="text-center">
           <a href={resort.href} target="_blank" rel="noopener noreferrer" className="text-blue-600 underline hover:text-blue-800">
