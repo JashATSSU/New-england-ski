@@ -28,11 +28,12 @@ mongoose.connect(process.env.DB_URL, {
 
 // Middleware setup
 app.use(cors({
-  origin: 'https://new-england-mountainminder.onrender.com', // Allow requests from this specific origin
+  origin: ['https://new-england-mountainminder.onrender.com', 'http://localhost:8096'], // Allow requests from these specific origins
   methods: ['GET', 'POST', 'PUT', 'DELETE'], // Specify allowed HTTP methods
-  credentials: true, // If you need cookies/auth headers
+  credentials: true, 
   allowedHeaders: 'Content-Type, Authorization', // Allowing headers for authorization if needed
 }));
+
 app.use(express.json({ limit: '10mb' })); // Increase limit for larger images
 
 // User-related routes
