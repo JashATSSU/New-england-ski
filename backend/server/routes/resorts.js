@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-
+//
 // Hardcoded resorts data
 const resorts = [
   { id: 1, name: 'Attitash Mountain', webcam: ['https://www.youtube.com/embed/B32BbIXgHWw'] },
