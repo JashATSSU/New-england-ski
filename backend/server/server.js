@@ -28,7 +28,7 @@ mongoose.connect(process.env.DB_URL, {
 
 // Middleware setup
 app.use(cors({
-  origin: ['https://new-england-mountainminder.onrender.com', 'http://localhost:8096'], // Allow requests from these specific origins
+  origin: ['https://new-england-mountainminder.onrender.com'], // Allow requests from these specific origins
   methods: ['GET', 'POST', 'PUT', 'DELETE'], // Specify allowed HTTP methods
   credentials: true, 
   allowedHeaders: 'Content-Type, Authorization', // Allowing headers for authorization if needed
